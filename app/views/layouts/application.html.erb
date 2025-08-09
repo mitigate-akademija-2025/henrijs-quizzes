@@ -3,30 +3,26 @@
   <head>
     <title><%= content_for(:title) || "Henrijs Quizzes" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
   </head>
 
-  <body>
-    <%# necessary for devise %>
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
-  
-    <main class="container mx-auto mt-28 px-5 flex">
+  <body class="bg-gray-50 text-gray-900">
+    <!-- Flash -->
+    <% if notice.present? || alert.present? %>
+      <div class="max-w-3xl mx-auto mt-6 px-6">
+        <% if notice.present? %><p class="rounded bg-blue-600 text-white px-4 py-2 mb-2"><%= notice %></p><% end %>
+        <% if alert.present? %><p class="rounded bg-red-600 text-white px-4 py-2"><%= alert %></p><% end %>
+      </div>
+    <% end %>
+
+    <!-- Content -->
+    <main class="max-w-3xl mx-auto p-6 space-y-6"><!-- note: no 'flex', or use 'flex flex-col' -->
       <%= yield %>
     </main>
   </body>
