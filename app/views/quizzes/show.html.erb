@@ -1,0 +1,10 @@
+<h1><%= @quiz.title %></h1>
+<p><%= @quiz.description %></p>
+
+<p><%= link_to "Add question", new_quiz_question_path(@quiz) %></p>
+
+<ul>
+  <% @quiz.questions.each do |q| %>
+    <li><%= link_to q.body, q %></li>
+  <% end %>
+</ul>

@@ -1,0 +1,12 @@
+<li id="<%= dom_id(quiz) %>">
+  <%= link_to quiz.title, quiz %>
+  <% if quiz.description.present? %>
+    – <span><%= truncate(quiz.description, length: 120) %></span>
+  <% end %>
+  <small>by <%= quiz.user.username %></small>
+
+  <% if user_signed_in? && quiz.user_id == current_user.id %>
+      <%= link_to "Edit", edit_quiz_path(quiz) %>
+      <%= link_to "Delete", quiz, data: { turbo_method: :delete, turbo_confirm: "Delete this quiz?" } %>
+  <% end %>
+</li>

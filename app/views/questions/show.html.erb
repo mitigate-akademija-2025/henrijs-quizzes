@@ -1,0 +1,15 @@
+<h2><%= @question.body %></h2>
+
+<p><%= link_to "Add option", new_question_option_path(@question) %> |
+   <%= link_to "Edit question", edit_question_path(@question) %> |
+   <%= link_to "Back to quiz", quiz_path(@question.quiz) %></p>
+
+<ul>
+  <% @question.options.each do |o| %>
+    <li>
+      <%= o.body %> <%= "(correct)" if o.correct %>
+      — <%= link_to "Edit", edit_option_path(o) %>
+      — <%= link_to "Delete", o, data: { turbo_method: :delete, turbo_confirm: "Delete?" } %>
+    </li>
+  <% end %>
+</ul>
