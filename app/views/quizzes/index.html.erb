@@ -1,0 +1,14 @@
+<h1 class="text-3xl font-bold text-gray-800 mb-6">Quizzes</h1>
+
+<% if @quizzes.any? %>
+  <ul class="space-y-4">
+    <%= render @quizzes %>
+  </ul>
+<% else %>
+  <p class="text-gray-600">No quizzes yet.</p>
+  <% if user_signed_in? %>
+    <p class="mt-2">
+      <%= link_to "Create the first quiz", new_quiz_path, class: "text-blue-600 hover:underline" %>
+    </p>
+  <% end %>
+<% end %>

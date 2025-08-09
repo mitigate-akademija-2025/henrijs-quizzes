@@ -1,0 +1,24 @@
+<div class="flex items-center gap-3 rounded border border-gray-200 p-2 bg-white">
+
+  <!-- option text -->
+  <%= of.text_field :content, placeholder: "Option text", class: "flex-1 rounded p-2" %>
+
+  <!-- correct -->
+  <label class="cursor-pointer inline-flex items-center gap-1 p-2 rounded text-gray-400 hover:bg-green-100 transition has-[:checked]:text-green-600" title="Mark as correct">
+    <%= of.check_box :correct, class: "sr-only" %>
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+    </svg>
+  </label>
+
+  <!-- remove -->
+  <label class="cursor-pointer inline-flex items-center gap-1 p-2 rounded text-gray-400 hover:bg-red-100 transition has-[:checked]:text-red-600" title="Remove option">
+    <%= of.check_box :_destroy, class: "sr-only" %>
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M6 7h12M9 7V4h6v3m-7 4v7m4-7v7m5 0H5a2 2 0 01-2-2V7h18v10a2 2 0 01-2 2z" />
+    </svg>
+  </label>
+
+  
+</div>

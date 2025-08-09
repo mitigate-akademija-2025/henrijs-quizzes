@@ -1,0 +1,69 @@
+<header class="bg-black text-white shadow">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="h-14 flex items-center justify-between">
+
+      <!-- Brand -->
+      <div class="flex items-center gap-3">
+        <%= link_to root_path, class: "inline-flex items-center gap-2 hover:opacity-80 transition" do %>
+          <% if user_signed_in? %>
+            <span class="font-semibold">
+              Hello, <%= current_user.username.presence || "User" %>!
+            </span>
+          <% else %>
+            <span class="font-bold tracking-wide">Henrijs Quizzes</span>
+          <% end %>
+        <% end %>
+      </div>
+
+      <!-- Desktop nav -->
+      <nav class="hidden sm:flex items-center gap-4">
+        <%= link_to "Browse", quizzes_path, class: "hover:text-gray-300 transition" %>
+
+        <% if user_signed_in? %>
+            <%= link_to "Create Quiz", new_quiz_path,
+            class: "inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded transition" %>
+
+            <%= button_to "Log out",
+            destroy_user_session_path,
+            method: :delete,
+            class: "bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded" %>
+
+        <% else %>
+          <%= link_to "Log in", new_user_session_path, class: "hover:text-gray-300 transition" %>
+          <%= link_to "Sign up", new_user_registration_path,
+              class: "inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded transition" %>
+        <% end %>
+      </nav>
+
+      <!-- Mobile menu -->
+      <details class="sm:hidden relative">
+        <summary class="list-none cursor-pointer inline-flex items-center gap-2 rounded px-2 py-1 hover:bg-gray-800 transition">
+          <span class="sr-only">Menu</span>
+          <!-- hamburger -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </summary>
+        <div class="absolute right-0 mt-2 w-48 rounded-lg border border-gray-700 bg-black shadow-lg p-2 space-y-1 z-50">
+          <%= link_to "Browse", quizzes_path, class: "block px-3 py-2 rounded hover:bg-gray-800 transition" %>
+
+          <% if user_signed_in? %>
+            <%= link_to "Create Quiz", new_quiz_path,
+                  class: "block px-3 py-2 rounded hover:bg-gray-800 transition" %>
+
+            <%= button_to "Log out",
+            destroy_user_session_path,
+            method: :delete,
+            class: "bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded" %>
+
+          <% else %>
+            <%= link_to "Log in", new_user_session_path, class: "block px-3 py-2 rounded hover:bg-gray-800 transition" %>
+            <%= link_to "Sign up", new_user_registration_path, class: "block px-3 py-2 rounded hover:bg-gray-800 transition" %>
+          <% end %>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</header>

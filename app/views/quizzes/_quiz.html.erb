@@ -1,0 +1,20 @@
+<li class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition p-4">
+  <div class="flex justify-between items-start">
+    <div>
+      <%= link_to quiz.title, quiz_path(quiz),
+            class: "text-lg font-semibold text-blue-600 hover:underline" %>
+      <% if quiz.description.present? %>
+        <p class="text-gray-700 mt-1"><%= truncate(quiz.description, length: 120) %></p>
+      <% end %>
+      <p class="text-sm text-gray-500 mt-2">
+        by <%= quiz.user.try(:username) || "Anonymous" %>
+      </p>
+    </div>
+    <% if user_signed_in? && quiz.user_id == current_user.id %>
+      <div class="flex space-x-2">
+        <%= link_to "Edit", edit_quiz_path(quiz),
+              class: "text-sm bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded" %>
+      </div>
+    <% end %>
+  </div>
+</li>
