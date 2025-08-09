@@ -1,24 +1,40 @@
 class QuizzesController < ApplicationController
-  before_action :authenticate_user!, except: %i[index show]
-  before_action :set_quiz, only: %i[show edit update destroy]
-  before_action :authorize_quiz!, only: %i[edit update destroy]
-  before_action :require_confirmed_email!, only: %i[new create]
+  before_action :authenticate_user!, except: [ :index, :show ]
+  before_action :set_quiz, only: [ :show, :edit, :update, :destroy ]
+  before_action :authorize_quiz!, only: [ :edit, :update, :destroy ]
 
   def index
     @quizzes = Quiz.includes(:user).order(created_at: :desc)
   end
 
-  def show
-  end
+  def show; end
 
   def new
     @quiz = current_user.quizzes.build
+    # start with 1 question, 2 options
+    q = @quiz.questions.build
+    2.times { q.options.build }
   end
 
   def create
-    @quiz = current_user.quizzes.build(quiz_params)
-    if @quiz.save
+    @quiz = current_user.quizzes.build
+    @quiz.assign_attributes(quiz_params) if params[:quiz].present?
+
+    if params.key?(:add_question)
+      new_q = @quiz.questions.build
+      new_q.options.build
+      render :new
+
+    elsif params.key?(:add_option_for)
+      idx = params[:add_option_for].to_i
+      if (question = @quiz.questions[idx])
+        question.options.build
+      end
+      render :new
+
+    elsif @quiz.save
       redirect_to @quiz, notice: "Quiz created."
+
     else
       render :new, status: :unprocessable_entity
     end
@@ -28,8 +44,23 @@ class QuizzesController < ApplicationController
   end
 
   def update
-    if @quiz.update(quiz_params)
+    @quiz.assign_attributes(quiz_params) if params[:quiz].present?
+
+    if params.key?(:add_question)
+      new_q = @quiz.questions.build
+      new_q.options.build
+      render :edit
+
+    elsif params.key?(:add_option_for)
+      idx = params[:add_option_for].to_i
+      if (question = @quiz.questions[idx])
+        question.options.build
+      end
+      render :edit
+
+    elsif @quiz.save
       redirect_to @quiz, notice: "Quiz updated."
+
     else
       render :edit, status: :unprocessable_entity
     end
@@ -43,22 +74,20 @@ class QuizzesController < ApplicationController
   private
 
   def set_quiz
-    @quiz = Quiz.find(params[:id])
+    @quiz = Quiz.includes(questions: :options).find(params[:id])
   end
 
   def authorize_quiz!
-    if @quiz.user_id != current_user.id
-      redirect_to @quiz, alert: "Not allowed."
-    end
+    redirect_to @quiz, alert: "Not allowed." unless @quiz.user_id == current_user.id
   end
 
   def quiz_params
-    params.require(:quiz).permit(:title, :description)
-  end
-
-  def require_confirmed_email!
-    return if current_user.confirmed?
-    redirect_to edit_user_registration_path,
-      alert: "Please confirm your email to create a quiz."
+    params.fetch(:quiz, {}).permit(
+      :title, :description,
+      questions_attributes: [
+        :id, :content, :_destroy,
+        { options_attributes: [ :id, :content, :correct, :_destroy ] }
+      ]
+    )
   end
 end

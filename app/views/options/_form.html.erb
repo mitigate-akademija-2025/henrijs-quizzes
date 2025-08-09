@@ -1,5 +1,0 @@
-<%= form_with(model: [@question, @option].compact) do |f| %>
-  <%= f.text_field :body, placeholder: "Option text" %>
-  <label><%= f.check_box :correct %> Correct</label>
-  <%= f.submit %>
-<% end %>
