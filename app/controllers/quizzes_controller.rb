@@ -2,6 +2,7 @@ class QuizzesController < ApplicationController
   before_action :authenticate_user!, except: %i[index show]
   before_action :set_quiz, only: %i[show edit update destroy]
   before_action :authorize_quiz!, only: %i[edit update destroy]
+  before_action :require_confirmed_email!, only: %i[new create]
 
   def index
     @quizzes = Quiz.includes(:user).order(created_at: :desc)
@@ -46,10 +47,18 @@ class QuizzesController < ApplicationController
   end
 
   def authorize_quiz!
-    redirect_to @quiz, alert: "Not allowed." unless @quiz.user_id == current_user.id
+    if @quiz.user_id != current_user.id
+      redirect_to @quiz, alert: "Not allowed."
+    end
   end
 
   def quiz_params
     params.require(:quiz).permit(:title, :description)
+  end
+
+  def require_confirmed_email!
+    return if current_user.confirmed?
+    redirect_to edit_user_registration_path,
+      alert: "Please confirm your email to create a quiz."
   end
 end
