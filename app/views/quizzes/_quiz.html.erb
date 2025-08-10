@@ -7,14 +7,17 @@
         <p class="text-gray-700 mt-1"><%= truncate(quiz.description, length: 120) %></p>
       <% end %>
       <p class="text-sm text-gray-500 mt-2">
-        by <%= quiz.user.try(:username) || "Anonymous" %>
+        by <%= quiz.user.username %>
       </p>
     </div>
-    <% if user_signed_in? && quiz.user_id == current_user.id %>
-      <div class="flex space-x-2">
-        <%= link_to "Edit", edit_quiz_path(quiz),
-              class: "text-sm bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded" %>
-      </div>
+
+    <%= link_to new_quiz_game_path(quiz),
+          class: "inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M6 4l10 6-10 6V4z" />
+      </svg>
+      Play
     <% end %>
+  
   </div>
 </li>

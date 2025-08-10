@@ -14,8 +14,9 @@ Rails.application.routes.draw do
   root "quizzes#index"
 
   resources :quizzes do
-    resources :questions, shallow: true do
-      resources :options, shallow: true
-    end
+    # resources :questions, shallow: true do
+    #   resources :options, shallow: true
+    # end
+    resources :games, only: [ :new, :create, :show ], shallow: true
   end
 end

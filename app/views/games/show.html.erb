@@ -1,0 +1,21 @@
+<h1 class="text-2xl font-bold mb-2"><%= @quiz.title %></h1>
+<p class="mb-6">Rezultāts: <span class="font-semibold"><%= @game.score %></span> / <%= @quiz.questions.count %></p>
+
+<div class="space-y-4">
+  <% @results.each do |g| %>
+    <div class="rounded border bg-white p-3">
+      <p class="font-medium mb-2"><%= g[:question].content %></p>
+      <% g[:options].each do |opt| %>
+        <% chosen  = g[:chosen_ids].include?(opt.id) %>
+        <% correct = g[:correct_ids].include?(opt.id) %>
+        <div class="flex items-center gap-2 text-sm
+                    <%= 'text-green-700' if correct %>
+                    <%= 'text-red-700' if chosen && !correct %>">
+          <span><%= opt.content %></span>
+          <% if correct %><span class="ml-2 text-green-600">(papareiza)</span><% end %>
+          <% if chosen && !correct %><span class="ml-2 text-red-600">(nepareiza)</span><% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

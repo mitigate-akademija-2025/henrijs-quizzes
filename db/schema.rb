@@ -10,7 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_09_083619) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_10_072931) do
+  create_table "games", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "quiz_id", null: false
+    t.integer "last_question_id"
+    t.integer "score"
+    t.string "share_token"
+    t.datetime "finished_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["last_question_id"], name: "index_games_on_last_question_id"
+    t.index ["quiz_id"], name: "index_games_on_quiz_id"
+    t.index ["share_token"], name: "index_games_on_share_token", unique: true
+    t.index ["user_id"], name: "index_games_on_user_id"
+  end
+
+  create_table "guesses", force: :cascade do |t|
+    t.integer "game_id", null: false
+    t.integer "option_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id", "option_id"], name: "index_guesses_on_game_id_and_option_id", unique: true
+    t.index ["game_id"], name: "index_guesses_on_game_id"
+    t.index ["option_id"], name: "index_guesses_on_option_id"
+  end
+
   create_table "options", force: :cascade do |t|
     t.text "content"
     t.boolean "correct"
@@ -65,6 +90,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_083619) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "games", "questions", column: "last_question_id"
+  add_foreign_key "games", "quizzes"
+  add_foreign_key "games", "users"
+  add_foreign_key "guesses", "games"
+  add_foreign_key "guesses", "options"
   add_foreign_key "options", "questions"
   add_foreign_key "questions", "quizzes"
   add_foreign_key "quizzes", "users"
