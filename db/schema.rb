@@ -10,7 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_10_072931) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_10_134318) do
+  create_table "feedbacks", force: :cascade do |t|
+    t.integer "game_id", null: false
+    t.integer "quiz_id", null: false
+    t.integer "user_id"
+    t.text "comment"
+    t.integer "vote", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id", "user_id"], name: "index_feedbacks_on_game_id_and_user_id", unique: true
+    t.index ["game_id"], name: "index_feedbacks_on_game_id"
+    t.index ["quiz_id"], name: "index_feedbacks_on_quiz_id"
+    t.index ["user_id"], name: "index_feedbacks_on_user_id"
+    t.check_constraint "vote IN (-1, 0, 1)", name: "vote_in_range"
+  end
+
   create_table "games", force: :cascade do |t|
     t.integer "user_id"
     t.integer "quiz_id", null: false
@@ -90,6 +105,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_072931) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "feedbacks", "games"
+  add_foreign_key "feedbacks", "quizzes"
+  add_foreign_key "feedbacks", "users"
   add_foreign_key "games", "questions", column: "last_question_id"
   add_foreign_key "games", "quizzes"
   add_foreign_key "games", "users"
