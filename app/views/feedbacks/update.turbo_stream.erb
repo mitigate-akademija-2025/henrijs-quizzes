@@ -1,0 +1,4 @@
+<%= turbo_stream.replace dom_id(@quiz, :feedback) do %>
+  <%= render "feedbacks/form", quiz: @quiz,
+    feedback: @quiz.feedbacks.find_by(user: current_user) || @quiz.feedbacks.new %>
+<% end %>

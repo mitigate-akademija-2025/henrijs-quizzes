@@ -18,5 +18,6 @@ Rails.application.routes.draw do
     #   resources :options, shallow: true
     # end
     resources :games, only: [ :new, :create, :show ], shallow: true
+    resources :feedbacks, only: [ :create, :update ]
   end
 end
