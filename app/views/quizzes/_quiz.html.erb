@@ -1,23 +1,37 @@
-<li class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition p-4">
-  <div class="flex justify-between items-start">
-    <div>
+<li class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition">
+  <div class="flex items-start justify-between gap-4">
+    <div class="min-w-0">
       <%= link_to quiz.title, quiz_path(quiz),
-            class: "text-lg font-semibold text-blue-600 hover:underline" %>
+            class: "block text-lg font-semibold text-gray-900 hover:underline truncate" %>
+
       <% if quiz.description.present? %>
-        <p class="text-gray-700 mt-1"><%= truncate(quiz.description, length: 120) %></p>
+        <p class="text-gray-600 mt-1 line-clamp-2"><%= truncate(quiz.description, length: 140) %></p>
       <% end %>
-      <p class="text-sm text-gray-500 mt-2">
-        by <%= quiz.user.username %>
-      </p>
+
+      <div class="mt-3 flex items-center gap-3 text-sm text-gray-500">
+        <!-- author -->
+        <div class="inline-flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8V22h19.2v-2.8c0-3.2-6.4-4.8-9.6-4.8z"/>
+          </svg>
+          <span><%= quiz.user&.username || "Anonīms" %></span>
+        </div>
+
+        <span aria-hidden="true">•</span>
+        <span><%= time_ago_in_words(quiz.created_at) %> ago</span>
+
+        <span aria-hidden="true">•</span>
+        <span><%= pluralize(quiz.questions.size, "question") %></span>
+      </div>
     </div>
 
+    <!-- Play -->
     <%= link_to new_quiz_game_path(quiz),
-          class: "inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded" do %>
+          class: "shrink-0 inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg shadow-sm transition" do %>
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
         <path d="M6 4l10 6-10 6V4z" />
       </svg>
       Play
     <% end %>
-  
   </div>
 </li>

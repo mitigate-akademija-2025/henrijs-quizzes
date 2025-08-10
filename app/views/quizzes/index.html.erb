@@ -1,14 +1,32 @@
-<h1 class="text-3xl font-bold text-gray-800 mb-6">Quizzes</h1>
+<!-- Hero -->
+<section class="bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-2xl p-6 mb-8 shadow">
+  <div class="flex items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-semibold">Quizzes</h1>
+      <p class="text-violet-100 mt-1">Izvēlies testu un sāc spēli!</p>
+    </div>
+
+    <% if user_signed_in? %>
+      <%= link_to "Create Quiz", new_quiz_path,
+            class: "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl shadow-sm transition" %>
+    <% else %>
+      <%= link_to "Sign in", new_user_session_path,
+            class: "inline-flex items-center gap-2 bg-white text-black px-4 py-2 rounded-xl shadow-sm hover:bg-gray-100 transition" %>
+    <% end %>
+  </div>
+</section>
 
 <% if @quizzes.any? %>
-  <ul class="space-y-4">
+  <ul class="grid gap-5 md:grid-cols-2">
     <%= render @quizzes %>
   </ul>
 <% else %>
-  <p class="text-gray-600">No quizzes yet.</p>
-  <% if user_signed_in? %>
-    <p class="mt-2">
-      <%= link_to "Create the first quiz", new_quiz_path, class: "text-blue-600 hover:underline" %>
-    </p>
-  <% end %>
+  <div class="rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center">
+    <h2 class="text-lg font-semibold text-gray-800">No quizzes yet</h2>
+    <p class="text-gray-600 mt-1">Be the first to create one and challenge others.</p>
+    <% if user_signed_in? %>
+      <%= link_to "Create the first quiz", new_quiz_path,
+            class: "inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm" %>
+    <% end %>
+  </div>
 <% end %>
