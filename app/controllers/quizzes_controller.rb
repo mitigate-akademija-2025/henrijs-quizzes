@@ -7,7 +7,19 @@ class QuizzesController < ApplicationController
     @quizzes = Quiz.includes(:user).order(created_at: :desc)
   end
 
-  def show; end
+  def show
+    @top_games = @quiz.games
+      .where.not(finished_at: nil)
+      .order(score: :desc, finished_at: :asc)
+      .includes(:user)
+      .limit(10)
+
+    @games_count = @quiz.games.where.not(finished_at: nil).count
+    @total_questions = @quiz.questions.size
+    @average_score = @quiz.games.where.not(score: nil).average(:score).to_f
+    @average_percentage = @total_questions.positive? ? ((@average_score / @total_questions) * 100).round : 0
+  end
+
 
   def new
     @quiz = current_user.quizzes.build
