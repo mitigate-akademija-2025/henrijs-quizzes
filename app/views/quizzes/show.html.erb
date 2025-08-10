@@ -1,11 +1,131 @@
-<h1 class="text-3xl font-bold text-gray-800 mb-4"><%= @quiz.title %></h1>
+<div class="max-w-4xl mx-auto space-y-6">
+  <!-- Quiz header -->
+  <header class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900"><%= @quiz.title %></h1>
+        <p class="text-sm text-gray-500 mt-1">
+          Created by <span class="font-medium"><%= @quiz.user.username %></span>
+        </p>
+      </div>
 
-<% if @quiz.description.present? %>
-  <p class="text-gray-700 mb-4"><%= @quiz.description %></p>
-<% end %>
+      <div class="flex gap-3">
+        <%= link_to "Edit Quiz", edit_quiz_path(@quiz),
+              class: "bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-sm" %>
+        <%= link_to new_quiz_game_path(@quiz),
+          class: "shrink-0 inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg shadow-sm transition" do %>
+          Play Quiz
+        <% end %>
+      </div>
+    </div>
 
-<p class="text-sm text-gray-500 mb-6">by <%= @quiz.user.username %></p>
+    <% if @quiz.description.present? %>
+      <p class="mt-3 text-gray-700"><%= @quiz.description %></p>
+    <% end %>
 
-<%= link_to "Edit Quiz", edit_quiz_path(@quiz),
-      class: "inline-block bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded mb-6" %>
+    <% if @games_count.to_i > 0 %>
+      <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Total Attempts -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-center gap-3">
+          <div class="flex-shrink-0 bg-blue-100 text-blue-600 p-2 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-6 8h6a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2h2z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Total Attempts</p>
+            <p class="text-lg font-semibold text-gray-900"><%= pluralize(@games_count, "attempt") %></p>
+          </div>
+        </div>
 
+        <!-- Average Score -->
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-center gap-3">
+          <div class="flex-shrink-0 bg-green-100 text-green-600 p-2 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 11V3a1 1 0 112 0v8m-7 4h10a1 1 0 010 2H6a1 1 0 010-2zm-4 5h18a1 1 0 110 2H2a1 1 0 110-2z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Average Score</p>
+            <p class="text-lg font-semibold text-gray-900">
+              <%= number_with_precision(@average_score, precision: 0) %> / <%= @total_questions %>
+              <span class="text-gray-500 text-sm">
+                (<%= ((@average_score.to_f / @total_questions) * 100).round %>%)
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+  </header>
+
+  <!-- Top results -->
+  <% if @games_count.to_i > 0 %>
+    <section>
+    <h2 class="text-xl font-semibold text-gray-800 mb-3"> Best Results</h2>
+
+    <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-50 text-gray-700">
+          <tr>
+            <th class="px-4 py-2 text-left">Name</th>
+            <th class="px-4 py-2 text-left w-56">Percentage</th>
+            <th class="px-4 py-2 text-left">Score</th>
+            <th class="px-4 py-2 text-left">Duration</th>
+            <th class="px-4 py-2 text-left">Completed</th>
+            <th class="px-4 py-2 text-left">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <% @top_games.each do |g| %>
+            <% percentage = @total_questions.positive? ? ((g.score.to_f / @total_questions) * 100).round : 0 %>
+
+            <tr class="border-t hover:bg-gray-50 transition">
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z"/>
+                  </svg>
+                  <span class="font-medium text-gray-900"><%= g.user&.username.presence || "Guest" %></span>
+                </div>
+              </td>
+
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <div class="h-2 w-40 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full
+                                <%= percentage >= 80 ? 'bg-green-500' : percentage >= 50 ? 'bg-yellow-400' : 'bg-rose-500' %>"
+                        style="width:<%= percentage %>%"></div>
+                  </div>
+                  <span class="text-gray-700"><%= percentage %>%</span>
+                </div>
+              </td>
+
+              <td class="px-4 py-3"><span class="font-medium"><%= g.score %></span> / <%= @total_questions %></td>
+
+              <td class="px-4 py-3 text-gray-700">
+                <%= distance_of_time_in_words(g.created_at, g.finished_at) %>
+              </td>
+
+              <td class="px-4 py-3 text-gray-500">
+                <%= time_ago_in_words(g.finished_at) %> ago
+              </td>
+
+              <td class="px-4 py-3">
+                <%= link_to "Answers", game_path(g),
+                      class: "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 transition" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <% else %>
+    <p class="mt-8 text-sm text-gray-500">No finished games yet.</p>
+  <% end %>
+</div>

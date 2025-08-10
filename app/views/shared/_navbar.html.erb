@@ -17,21 +17,21 @@
 
       <!-- Desktop nav -->
       <nav class="hidden sm:flex items-center gap-4">
-        <%= link_to "Browse", quizzes_path, class: "hover:text-gray-300 transition" %>
+        <%= link_to "Browse", quizzes_path, class: "hover:text-gray-400 transition" %>
 
         <% if user_signed_in? %>
             <%= link_to "Create Quiz", new_quiz_path,
-            class: "inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded transition" %>
+            class: "inline-flex items-center gap-2 hover:text-blue-300 text-white px-3 py-1.5 rounded transition" %>
 
             <%= button_to "Log out",
             destroy_user_session_path,
             method: :delete,
-            class: "bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded" %>
+            class: "hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer" %>
 
         <% else %>
-          <%= link_to "Log in", new_user_session_path, class: "hover:text-gray-300 transition" %>
+          <%= link_to "Log in", new_user_session_path, class: "hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer transition" %>
           <%= link_to "Sign up", new_user_registration_path,
-              class: "inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded transition" %>
+              class: "inline-flex items-center gap-2 hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer transition" %>
         <% end %>
       </nav>
 
@@ -46,20 +46,20 @@
           </svg>
         </summary>
         <div class="absolute right-0 mt-2 w-48 rounded-lg border border-gray-700 bg-black shadow-lg p-2 space-y-1 z-50">
-          <%= link_to "Browse", quizzes_path, class: "block px-3 py-2 rounded hover:bg-gray-800 transition" %>
+          <%= link_to "Browse", quizzes_path, class: "block hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer transition" %>
 
           <% if user_signed_in? %>
             <%= link_to "Create Quiz", new_quiz_path,
-                  class: "block px-3 py-2 rounded hover:bg-gray-800 transition" %>
+                  class: "block hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer transition" %>
 
             <%= button_to "Log out",
             destroy_user_session_path,
             method: :delete,
-            class: "bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded" %>
+            class: "hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer transition" %>
 
           <% else %>
-            <%= link_to "Log in", new_user_session_path, class: "block px-3 py-2 rounded hover:bg-gray-800 transition" %>
-            <%= link_to "Sign up", new_user_registration_path, class: "block px-3 py-2 rounded hover:bg-gray-800 transition" %>
+            <%= link_to "Log in", new_user_session_path, class: "block hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer transition" %>
+            <%= link_to "Sign up", new_user_registration_path, class: "block hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer transition" %>
           <% end %>
         </div>
       </details>

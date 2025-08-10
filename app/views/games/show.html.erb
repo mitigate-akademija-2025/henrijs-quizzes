@@ -1,0 +1,74 @@
+<!-- Header / summary -->
+<section class="bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-2xl p-6 mb-6 shadow">
+  <h1 class="text-3xl font-semibold leading-tight"><%= @quiz.title %></h1>
+
+  <div class="mt-4 flex items-center gap-4 text-violet-50">
+    <p class="text-lg">
+      Rezultāts:
+      <%= @game.score %> / <%= @quiz.questions.count %>
+    </p>
+  </div>
+
+  <!-- tiny progress bar -->
+  <% total = @quiz.questions.count.nonzero? || 1 %>
+  <% pct = ((@game.score.to_f / total) * 100).round %>
+  <div class="mt-4 h-2 bg-white/20 rounded-full overflow-hidden">
+    <div class="h-full bg-white/90" style="width: <%= pct %>%"></div>
+  </div>
+</section>
+
+<!-- Questions -->
+<div class="space-y-5">
+  <% @results.each_with_index do |g, i| %>
+    <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+      <h2 class="font-semibold text-gray-800 mb-4">
+        <span class="text-gray-500 mr-2"><%= i + 1 %>.</span>
+        <%= g[:question].content %>
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <% g[:options].each do |opt| %>
+          <% chosen  = g[:chosen_ids].include?(opt.id) %>
+          <% correct = g[:correct_ids].include?(opt.id) %>
+
+          <% base = "rounded-xl px-4 py-3 shadow-sm border transition" %>
+          <% classes =
+                if chosen && correct
+                  "#{base} bg-green-600 text-white border-green-600"
+                elsif chosen && !correct
+                  "#{base} bg-red-600 text-white border-red-600"
+                elsif !chosen && correct
+                  "#{base} bg-gray-50 text-gray-800 border-green-300"
+                else
+                  "#{base} bg-gray-50 text-gray-800 border-gray-200"
+                end %>
+
+          <div class="<%= classes %>">
+            <div class="flex items-center justify-between gap-3">
+              <span><%= opt.content %></span>
+
+              <div class="flex items-center gap-2 text-xs">
+                <% if correct %>
+                  <span class="inline-block rounded px-2 py-0.5 <%= chosen ? 'text-white' : 'text-green-700' %>">
+                    pareizais
+                  </span>
+                <% end %>
+                <% if chosen && !correct %>
+                  <span class="inline-block rounded px-2 py-0.5 text-white">
+                    minējums
+                  </span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</div>
+
+
+<div class="pt-2 mt-6">
+  <%= link_to "Pārbaudes", quizzes_path, class: "w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-xl shadow-sm transition" %>
+</div>
+
