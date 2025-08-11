@@ -1,48 +1,114 @@
 <%= form_with model: quiz do |f| %>
-  <div class="space-y-6">
-    <div class="space-y-1.5">
-      <h3 class="text-base font-semibold text-gray-900">Title</h3>
-      <%= f.text_field :title,
-            placeholder: "Give your quiz a short, clear title",
-            class: "w-full rounded-xl border border-gray-300 bg-white/90 px-3 py-2.5 shadow-sm
-                    placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500" %>
-    </div>
+  <div class="mx-auto max-w-3xl">
+    <!-- Move the Stimulus controller to wrap the whole card so the footer button is in scope -->
+    <section
+      data-controller="nested"
+      data-nested-index-value="<%= f.object.questions.size %>"
+      class="relative overflow-hidden rounded-2xl border border-gray-200/70 bg-white/80 p-6 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/60">
 
-    <div class="space-y-1.5">
-      <h3 class="text-base font-semibold text-gray-900">Description</h3>
-      <%= f.text_area :description, rows: 3,
+      <!-- accent line -->
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-blue-500/40 via-cyan-500/40 to-violet-500/40"></div>
+
+      <!-- Header -->
+      <header class="mb-6 flex items-center gap-3">
+        <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600/10 text-blue-700 ring-1 ring-inset ring-blue-600/20">
+          <!-- sparkles icon -->
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3l1.4 3.7L17 8l-3.6 1.3L12 13l-1.4-3.7L7 8l3.6-1.3L12 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M18 14l.9 2.3L21 17l-2.1.7L18 20l-.9-2.3L15 17l2.1-.7L18 14Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <div>
+          <h1 class="text-base font-semibold text-gray-900">
+            <%= local_assigns[:title] || (quiz.persisted? ? "Edit Quiz" : "New Quiz") %>
+          </h1>
+          <% if local_assigns[:subtitle].present? %>
+            <p class="text-xs text-gray-500"><%= subtitle %></p>
+          <% end %>
+        </div>
+      </header>
+
+      <!-- Errors -->
+      <% if f.object.errors.any? %>
+        <div class="mb-6 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+          <p class="font-medium">Please fix the following:</p>
+          <ul class="mt-1 list-disc pl-5">
+            <% f.object.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="space-y-6">
+        <!-- Title -->
+        <div class="space-y-1.5">
+          <label class="text-base font-semibold text-gray-900">Title</label>
+          <%= f.text_field :title,
+                placeholder: "Give your quiz a short, clear title",
+                class: "w-full rounded-xl border border-gray-200 bg-white/90 px-3 py-2.5 shadow-sm
+                        placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500" %>
+        </div>
+
+        <!-- Description -->
+        <div class="space-y-1.5">
+          <label class="text-base font-semibold text-gray-900">Description</label>
+          <%= f.text_area :description,
+            rows: 3,
             placeholder: "Describe what the quiz is about",
-            class: "w-full rounded-xl border border-gray-300 bg-white/90 px-3 py-2.5 shadow-sm
+            data: {
+              controller: "autosize",
+              action: "input->autosize#resize",
+              autosize_min_rows_value: 3,
+              autosize_max_rows_value: 14
+            },
+            class: "w-full rounded-xl border border-gray-200 bg-white/90 px-3 py-2.5 shadow-sm
                     placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500
-                    min-h-[120px] resize-y" %>
-    </div>
+                    resize-y" %>   
+          <p class="text-xs text-gray-500">Keep it brief – what will people learn or test?</p>
+        </div>
 
-    <div data-controller="nested" data-nested-index-value="<%= f.object.questions.size %>">
-      <h3 class="text-base font-semibold text-gray-900">Questions</h3>
+        <!-- Questions -->
+        <div>
+          <div class="mb-2 flex items-center justify-between">
+            <h3 class="text-base font-semibold text-gray-900">Questions</h3>
+          </div>
 
-      <div id="questions" data-nested-target="list" class="mt-3 space-y-4">
-        <%= f.fields_for :questions do |qf| %>
-          <%= render "questions/fields", f: qf %>
-        <% end %>
+          <div id="questions" data-nested-target="list" class="mt-3 space-y-4">
+            <%= f.fields_for :questions do |qf| %>
+              <%= render "questions/fields", f: qf %>
+            <% end %>
+          </div>
+
+          <!-- Template used by Stimulus -->
+          <template data-nested-target="template">
+            <%= f.fields_for :questions, Question.new, child_index: "NEW_Q" do |qf| %>
+              <%= render "questions/fields", f: qf, new_record: true %>
+            <% end %>
+          </template>
+        </div>
+
+        <!-- Footer actions (inside the controller’s scope so the button works) -->
+        <div class="mt-6 flex items-center justify-end gap-3">
+          <%= link_to quizzes_path,
+                class: "rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-700 shadow-sm hover:bg-gray-50" do %>
+            Cancel
+          <% end %>
+
+          <button type="button"
+                  data-action="nested#addQuestion"
+                  class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-3.5 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-blue-600/20 transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/60">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Add Question
+          </button>
+
+          <%= f.submit (f.object.persisted? ? "Save changes" : "Create quiz"),
+                class: "rounded-lg bg-emerald-600 px-4 py-2 text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/60" %>
+        </div>
       </div>
-
-      <template data-nested-target="template">
-        <%= f.fields_for :questions, Question.new, child_index: "NEW_Q" do |qf| %>
-          <%= render "questions/fields", f: qf, new_record: true %>
-        <% end %>
-      </template>
-
-      <div class="mt-6 flex items-center justify-end gap-3">
-        <button type="button"
-                class="p-2 rounded-lg border bg-blue-500 px-4 py-2 hover:bg-blue-600 text-white"
-                data-action="nested#addQuestion"
-                title="Add question" aria-label="Add question">
-          Add Question
-        </button>
-
-        <%= f.submit (f.object.persisted? ? "Save changes" : "Create quiz"),
-              class: "rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700" %>
-      </div>
-    </div>
+    </section>
   </div>
 <% end %>
