@@ -6,10 +6,12 @@ class FeedbacksController < ApplicationController
   PAGE_SIZE = 10
 
   def index
-    page = params.fetch(:page, 1).to_i
-    scope = @quiz.feedbacks.includes(:user).order(created_at: :desc)
-    @feedbacks = scope.limit(PAGE_SIZE).offset((page - 1) * PAGE_SIZE)
-    @next_page = page + 1 if @feedbacks.size == PAGE_SIZE
+    @quiz = Quiz.find(params[:quiz_id])
+    @feedbacks = @quiz.feedbacks
+                      .includes(:user)
+                      .order(created_at: :desc)
+                      .page(params[:page]).per(10)
+    @next_page = @feedbacks.next_page
 
     respond_to do |format|
       format.html
