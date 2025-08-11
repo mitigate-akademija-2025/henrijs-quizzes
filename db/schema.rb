@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_11_121824) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_11_195107) do
   create_table "feedbacks", force: :cascade do |t|
     t.integer "quiz_id", null: false
     t.integer "user_id", null: false
@@ -91,6 +91,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_11_121824) do
     t.datetime "locked_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "admin", default: false, null: false
+    t.index ["admin"], name: "index_users_on_admin"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

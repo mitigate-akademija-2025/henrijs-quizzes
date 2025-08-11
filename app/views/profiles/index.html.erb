@@ -1,0 +1,20 @@
+<div class="mx-auto max-w-4xl space-y-4">
+  <h1 class="text-xl font-semibold text-gray-900">Users</h1>
+
+  <div class="divide-y divide-gray-200 rounded-2xl border border-gray-200 bg-white">
+    <% @users.each do |u| %>
+      <div class="flex items-center justify-between gap-4 p-4">
+        <div class="min-w-0">
+          <div class="truncate font-medium text-gray-900"><%= u.username.presence || u.email %></div>
+          <div class="text-xs text-gray-500">Joined <%= l(u.created_at, format: :short) %></div>
+        </div>
+        <%= link_to "Open profile", profile_path(u),
+              class: "inline-flex items-center rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-3">
+    <%= paginate @users %>
+  </div>
+</div>

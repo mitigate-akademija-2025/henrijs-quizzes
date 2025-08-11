@@ -21,21 +21,25 @@
       </div>
 
       <!-- Desktop nav -->
-      <nav class="hidden sm:flex items-center gap-4">
+      <nav class="hidden sm:flex items-center gap-8">
+        <% if policy(User).index? %>
+          <%= link_to "All Users", profiles_path, class: "hover:text-gray-400 transition" %>
+        <% end %>
+
         <%= link_to "Browse", quizzes_path, class: "hover:text-gray-400 transition" %>
 
         <% if user_signed_in? %>
           <%= link_to "Create Quiz", new_quiz_path,
-              class: "inline-flex items-center gap-2 hover:text-blue-300 text-white px-3 py-1.5 rounded transition" %>
+              class: "inline-flex items-center hover:text-blue-300 text-white py-1.5 rounded transition" %>
 
-          <%= button_to "Log out",
+          <%= button_to "Logout",
               destroy_user_session_path,
               method: :delete,
-              class: "hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer" %>
+              class: "hover:text-blue-300 text-white py-1.5 rounded cursor-pointer" %>
         <% else %>
-          <%= link_to "Log in", new_user_session_path, class: "hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer transition" %>
+          <%= link_to "Login", new_user_session_path, class: "hover:text-blue-300 text-white py-1.5 rounded cursor-pointer transition" %>
           <%= link_to "Sign up", new_user_registration_path,
-              class: "inline-flex items-center gap-2 hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer transition" %>
+              class: "inline-flex items-center gap-2 hover:text-blue-300 text-white py-1.5 rounded cursor-pointer transition" %>
         <% end %>
       </nav>
 

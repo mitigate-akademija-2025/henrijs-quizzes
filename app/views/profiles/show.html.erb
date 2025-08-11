@@ -35,10 +35,9 @@
       </div>
     </header>
 
-    <turbo-frame id="completed_quizzes" src="<%= completed_games_profile_path %>">
-      <div class="rounded-xl border border-dashed border-gray-300/80 bg-white/60 p-6 text-center text-sm text-gray-500">
-        Loading…
-      </div>
+    <turbo-frame id="profile_games" src="<%= profile_path(@user, page: params[:page]) %>">
+      <div class="text-sm text-gray-500">Loading…</div>
     </turbo-frame>
+
   </section>
 </div>

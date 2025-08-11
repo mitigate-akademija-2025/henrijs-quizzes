@@ -18,8 +18,6 @@ Rails.application.routes.draw do
     resources :feedbacks, only: [ :index, :create, :update ]
   end
 
-  resource :profile, only: [:show] do
-    get :completed_games
-  end
-
+  resources :profiles, only: [ :index, :show ]
+  get "/profile", to: "profiles#me", as: :profile
 end
