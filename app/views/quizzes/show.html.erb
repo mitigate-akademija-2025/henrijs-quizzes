@@ -125,6 +125,15 @@
     </div>
   </section>
 
+  <section class="mt-8">
+    <h2 class="text-lg font-semibold text-gray-900">Atsauksmes</h2>
+
+    <%= turbo_frame_tag dom_id(@quiz, :feedbacks_frame),
+                        src: quiz_feedbacks_path(@quiz) do %>
+      <div class="py-6 text-center text-gray-500">Loading…</div>
+    <% end %>
+  </section>
+
   <% else %>
     <p class="mt-8 text-sm text-gray-500">No finished games yet.</p>
   <% end %>

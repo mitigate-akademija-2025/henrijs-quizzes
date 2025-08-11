@@ -15,6 +15,7 @@ class QuizzesController < ApplicationController
     @total_questions = @quiz.questions.size
     @average_score = @quiz.games.where.not(score: nil).average(:score).to_f
     @average_percentage = @total_questions.positive? ? ((@average_score / @total_questions) * 100).round : 0
+    @feedbacks = @quiz.feedbacks.includes(:user).order(created_at: :desc)
   end
 
   def new

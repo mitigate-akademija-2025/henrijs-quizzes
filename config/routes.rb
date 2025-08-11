@@ -15,6 +15,6 @@ Rails.application.routes.draw do
 
   resources :quizzes do
     resources :games, only: [ :new, :create, :show ], shallow: true
-    resources :feedbacks, only: [ :create, :update ]
+    resources :feedbacks, only: [ :index, :create, :update ]
   end
 end

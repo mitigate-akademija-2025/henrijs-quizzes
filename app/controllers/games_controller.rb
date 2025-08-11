@@ -37,6 +37,7 @@ class GamesController < ApplicationController
         chosen_ids:  @game.guesses.where(option_id: q.options.ids).pluck(:option_id)
       }
     end
+    @feedbacks = @quiz.feedbacks.where(user: current_user).order(created_at: :desc)
   end
 
   private

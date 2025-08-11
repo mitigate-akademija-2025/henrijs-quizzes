@@ -2,47 +2,36 @@ class FeedbacksController < ApplicationController
   respond_to :html, :turbo_stream
   before_action :authenticate_user!
   before_action :set_quiz
-  before_action :ensure_completed_quiz!, only: [ :create, :update ]
-  before_action :set_feedback, only: [ :update ]
+  before_action :ensure_completed_quiz!, only: [ :create ]
 
-  def create
-    @feedback = @quiz.feedbacks.find_or_initialize_by(user: current_user)
-    @feedback.assign_attributes(feedback_params)
+  PAGE_SIZE = 10
 
-    if @feedback.save
-      respond_to do |format|
-        format.turbo_stream do
-          flash.now[:notice] = "Thank you for your feedback!"
-          render :create
-        end
-        format.html { redirect_to @quiz, notice: "Thank you for your feedback!" }
-      end
-    else
-      respond_to do |format|
-        format.turbo_stream do
-          flash.now[:alert] = @feedback.errors.full_messages.to_sentence
-          render :create
-        end
-        format.html { redirect_to @quiz, alert: @feedback.errors.full_messages.to_sentence }
-      end
+  def index
+    page = params.fetch(:page, 1).to_i
+    scope = @quiz.feedbacks.includes(:user).order(created_at: :desc)
+    @feedbacks = scope.limit(PAGE_SIZE).offset((page - 1) * PAGE_SIZE)
+    @next_page = page + 1 if @feedbacks.size == PAGE_SIZE
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream
     end
   end
 
-  def update
-    if @feedback.update(feedback_params)
+  def create
+    @feedback = @quiz.feedbacks.new(user: current_user, **feedback_params)
+
+    if @feedback.save
+      @created_feedback = @feedback
+      @feedback = @quiz.feedbacks.new
+
       respond_to do |format|
-        format.turbo_stream do
-          flash.now[:notice] = "Your feedback has been updated."
-          render :update
-        end
-        format.html { redirect_to @quiz, notice: "Your feedback has been updated." }
+        format.turbo_stream { flash.now[:notice] = "Paldies par atsauksmi!"; render :create }
+        format.html { redirect_to @quiz, notice: "Paldies par atsauksmi!" }
       end
     else
       respond_to do |format|
-        format.turbo_stream do
-          flash.now[:alert] = @feedback.errors.full_messages.to_sentence
-          render :update
-        end
+        format.turbo_stream { render :create, status: :unprocessable_entity }
         format.html { redirect_to @quiz, alert: @feedback.errors.full_messages.to_sentence }
       end
     end
@@ -63,12 +52,6 @@ class FeedbacksController < ApplicationController
   end
 
   def ensure_completed_quiz!
-    has_finished = Game.where(quiz_id: @quiz.id, user_id: current_user.id)
-                       .where.not(finished_at: nil)
-                       .exists?
-    unless has_finished
-      redirect_to @quiz, alert: "Finish the quiz before leaving feedback." and return
-    end
   end
 
   def feedback_params

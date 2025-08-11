@@ -10,14 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_11_104716) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_11_121824) do
   create_table "feedbacks", force: :cascade do |t|
     t.integer "quiz_id", null: false
     t.integer "user_id", null: false
     t.text "comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["quiz_id", "user_id"], name: "index_feedbacks_on_quiz_id_and_user_id", unique: true
     t.index ["quiz_id"], name: "index_feedbacks_on_quiz_id"
     t.index ["user_id"], name: "index_feedbacks_on_user_id"
   end

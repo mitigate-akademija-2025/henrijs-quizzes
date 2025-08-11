@@ -1,0 +1,22 @@
+<li id="<%= dom_id(feedback) %>" class="w-full">
+  <div class="flex gap-3">
+    <!-- Avatar -->
+    <div class="h-10 w-10 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center text-sm font-semibold">
+      <%= (feedback.user&.username || "A")[0,1].to_s.upcase %>
+    </div>
+
+    <!-- Body -->
+    <div class="min-w-0 flex-1">
+      <div class="flex items-baseline gap-2">
+        <span class="font-medium text-gray-900"><%= feedback.user&.username || "Anonīms" %></span>
+        <%= time_tag feedback.created_at, "#{time_ago_in_words(feedback.created_at)} ago",
+              class: "text-xs text-gray-500",
+              title: l(feedback.created_at, format: :long) %>
+      </div>
+
+      <div class="mt-1 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 break-words">
+        <%= simple_format(h(feedback.comment)) %>
+      </div>
+    </div>
+  </div>
+</li>
