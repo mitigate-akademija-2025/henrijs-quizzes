@@ -1,0 +1,56 @@
+<% q_index = f.index || "NEW_Q" %>
+<% display_index = (q_index.to_s =~ /\A\d+\z/) ? q_index.to_i + 1 : nil %>
+
+<div data-question
+     data-persisted="<%= f.object.persisted? %>"
+     data-question-index="<%= q_index %>"
+     data-option-index="<%= f.object.options.size %>"
+     class="w-full rounded-xl border border-gray-300 bg-white/90 px-4 py-3.5 shadow-sm">
+
+  <%= f.hidden_field :id if f.object.persisted? %>
+  <%= f.hidden_field :_destroy, value: "0", data: { role: "destroy-flag" } %>
+
+  <div class="flex items-center gap-2">
+    <% if display_index %>
+      <span class="w-6 text-right text-sm font-semibold text-gray-500"><%= display_index %>.</span>
+    <% end %>
+
+    <%= f.text_field :content,
+          placeholder: "Question…",
+          class: "w-full bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/60" %>
+
+    <button type="button"
+            data-action="nested#addOption"
+            class="p-2 rounded-md border hover:bg-gray-100"
+            title="Add option" aria-label="Add option">
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M11 11V6h2v5h5v2h-5v5h-2v-5H6v-2z"/>
+      </svg>
+    </button>
+
+    <button type="button"
+            data-action="nested#removeQuestion"
+            class="p-2 rounded-md border hover:bg-gray-100 text-rose-600"
+            title="Remove question" aria-label="Remove question">
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6M14 11v6"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="mt-3 space-y-2" data-options-list>
+    <% f.object.options.each_with_index do |option, j| %>
+      <%= f.fields_for :options, option, child_index: j do |of| %>
+        <%= render "options/fields", of: of %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <template data-option-template>
+    <%= f.fields_for :options, Option.new, child_index: "NEW_OPT" do |of| %>
+      <%= render "options/fields", of: of %>
+    <% end %>
+  </template>
+</div>

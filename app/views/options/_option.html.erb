@@ -1,0 +1,10 @@
+<div id="<%= dom_id(option) %>" class="flex items-center gap-3 rounded border p-2 bg-white">
+  <%= form_with model: option, data: { turbo_stream: true }, class: "flex-1 flex items-center gap-2" do |of| %>
+    <%= of.check_box :correct %>
+    <%= of.text_field :content, class: "flex-1 rounded p-2" %>
+    <%= of.submit "Save", class: "btn" %>
+  <% end %>
+
+  <%= button_to "✕", option_path(option), method: :delete,
+        data: { turbo_confirm: "Remove option?" }, class: "btn-ghost" %>
+</div>

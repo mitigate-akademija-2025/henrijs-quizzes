@@ -1,44 +1,48 @@
-<%= form_with(model: quiz) do |f| %>
-  <% if quiz.errors.any? %>
-    <div class="mb-6 rounded border border-red-300 bg-red-50 p-3 text-red-800">
-      <p class="font-semibold mb-1"><%= pluralize(quiz.errors.count, "error") %> prevented saving:</p>
-      <ul class="list-disc list-inside">
-        <% quiz.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <!-- Quiz fields -->
-  <div class="grid gap-4 mb-8 ">
-    <div class="rounded border border-gray-200 bg-white p-4 shadow-sm">
-      <%= f.label :title, class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <%= f.text_field :title, class: "w-full rounded border border-gray-200 p-3" %>
-    </div>
-    <div class="rounded border border-gray-200 bg-white p-4 shadow-sm">
-      <%= f.label :description, class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <%= f.text_area :description, rows: 4, class: "w-full rounded border border-gray-200  p-3" %>
-    </div>
-  </div>
-
-  <!-- Questions -->
-  <h2 class="text-xl font-semibold mb-3">Questions & Quoptions</h2>
+<%= form_with model: quiz do |f| %>
   <div class="space-y-6">
-    <% quiz.questions.each_with_index do |question, i| %>
-      <%= f.fields_for :questions, question, child_index: i do |qf| %>
-        <%= render "question_fields", f: qf, question_index: i %>
-      <% end %>
-    <% end %>
-  </div>
+    <div class="space-y-1.5">
+      <h3 class="text-base font-semibold text-gray-900">Title</h3>
+      <%= f.text_field :title,
+            placeholder: "Give your quiz a short, clear title",
+            class: "w-full rounded-xl border border-gray-300 bg-white/90 px-3 py-2.5 shadow-sm
+                    placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500" %>
+    </div>
 
-  <!-- Action buttons -->
-  <div class="mt-6 flex items-center gap-3">
-    <%= submit_tag "Add Question",
-          name: "add_question",
-          class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow" %>
+    <div class="space-y-1.5">
+      <h3 class="text-base font-semibold text-gray-900">Description</h3>
+      <%= f.text_area :description, rows: 3,
+            placeholder: "Describe what the quiz is about",
+            class: "w-full rounded-xl border border-gray-300 bg-white/90 px-3 py-2.5 shadow-sm
+                    placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500
+                    min-h-[120px] resize-y" %>
+    </div>
 
-    <%= f.submit "Save Changes",
-          class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow" %>
+    <div data-controller="nested" data-nested-index-value="<%= f.object.questions.size %>">
+      <h3 class="text-base font-semibold text-gray-900">Questions</h3>
 
-    
+      <div id="questions" data-nested-target="list" class="mt-3 space-y-4">
+        <%= f.fields_for :questions do |qf| %>
+          <%= render "questions/fields", f: qf %>
+        <% end %>
+      </div>
+
+      <template data-nested-target="template">
+        <%= f.fields_for :questions, Question.new, child_index: "NEW_Q" do |qf| %>
+          <%= render "questions/fields", f: qf, new_record: true %>
+        <% end %>
+      </template>
+
+      <div class="mt-6 flex items-center justify-end gap-3">
+        <button type="button"
+                class="p-2 rounded-lg border bg-blue-500 px-4 py-2 hover:bg-blue-600 text-white"
+                data-action="nested#addQuestion"
+                title="Add question" aria-label="Add question">
+          Add Question
+        </button>
+
+        <%= f.submit (f.object.persisted? ? "Save changes" : "Create quiz"),
+              class: "rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700" %>
+      </div>
+    </div>
   </div>
 <% end %>
