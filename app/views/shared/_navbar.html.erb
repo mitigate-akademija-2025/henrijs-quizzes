@@ -6,7 +6,7 @@
       <div class="flex items-center gap-3">
         <%= link_to root_path, class: "inline-flex items-center gap-2 hover:opacity-80 transition" do %>
           <% if user_signed_in? %>
-            <%= link_to profile_path,
+            <%= link_to my_profile_path,
                       class: "flex items-center gap-1 hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer transition" do %>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white/90" viewBox="0 0 24 24" fill="none">
                 <path d="M15.75 7.5a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" stroke="currentColor" stroke-width="1.5"/>
@@ -60,7 +60,7 @@
             <%= link_to "Create Quiz", new_quiz_path,
                 class: "block hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer transition" %>
 
-            <%= link_to profile_path,
+            <%= link_to my_profile_path,
                       class: "flex items-center gap-1 hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer transition" do %>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white/90" viewBox="0 0 24 24" fill="none">
                 <path d="M15.75 7.5a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" stroke="currentColor" stroke-width="1.5"/>

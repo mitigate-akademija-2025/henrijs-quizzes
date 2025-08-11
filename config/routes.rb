@@ -19,5 +19,5 @@ Rails.application.routes.draw do
   end
 
   resources :profiles, only: [ :index, :show ]
-  get "/profile", to: "profiles#me", as: :profile
+  get "/profile", to: "profiles#me", as: :my_profile
 end
