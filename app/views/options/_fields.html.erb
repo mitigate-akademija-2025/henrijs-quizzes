@@ -1,0 +1,33 @@
+<div data-option
+     data-persisted="<%= of.object.persisted? %>"
+     class="group flex w-full items-center gap-3 rounded-xl border border-gray-200/80 bg-white/90 px-3 py-2.5 shadow-sm transition hover:shadow-md">
+
+  <%= of.hidden_field :id if of.object.persisted? %>
+  <%= of.hidden_field :_destroy, value: "0", data: { role: "destroy-flag" } %>
+
+  <!-- correct toggle -->
+  <label class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600/10 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 has-[:checked]:bg-emerald-600 has-[:checked]:text-white has-[:checked]:ring-emerald-600/30"
+         title="Mark as correct">
+    <%= of.check_box :correct, class: "sr-only" %>
+    <svg class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M5 13l4 4L19 7"/>
+    </svg>
+  </label>
+
+  <!-- text -->
+  <%= of.text_field :content,
+        placeholder: "Option text",
+        class: "flex-1 rounded-lg bg-white px-3 py-2.5 placeholder:text-gray-400 focus:outline-none " %>
+
+  <!-- remove -->
+  <button type="button"
+          data-action="nested#removeOption"
+          title="Remove option" aria-label="Remove option"
+          class="p-0 m-0 inline-flex items-center text-rose-600 hover:text-rose-700 focus:outline-none">
+    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18"
+            stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>

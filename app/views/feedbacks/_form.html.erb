@@ -1,0 +1,39 @@
+<%= turbo_frame_tag dom_id(quiz, :feedback) do %>
+  <%= form_with model: [quiz, feedback], data: { turbo: true }, class: "flex gap-3" do |f| %>
+    <!-- Avatar (initial) -->
+    <div class="h-10 w-10 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center text-sm font-semibold">
+      <%= (current_user&.username || "A")[0,1].to_s.upcase %>
+    </div>
+
+    <div class="flex-1">
+      <% if feedback.errors.any? %>
+        <div class="mb-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+          <p class="font-semibold"><%= pluralize(feedback.errors.count, "error") %> prevented saving</p>
+          <ul class="list-disc list-inside">
+            <% feedback.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- Comment bubble -->
+      <div class="rounded-2xl border border-gray-300 bg-white/90 px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500/60">
+        <%= f.text_area :comment,
+              placeholder: "Write your feedback…",
+              rows: 3,
+              class: "w-full bg-transparent outline-none resize-y" %>
+      </div>
+
+      <!-- Actions -->
+      <div class="mt-2 flex justify-end">
+        <button type="submit"
+                class="p-2 rounded-md border hover:bg-gray-100"
+                title="<%= feedback.persisted? ? 'Update feedback' : 'Send feedback' %>">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M2 21l20-9L2 3v7l14 2-14 2v7z"/>
+          </svg>
+          <span class="sr-only"><%= feedback.persisted? ? "Update feedback" : "Send feedback" %></span>
+        </button>
+      </div>
+    </div>
+  <% end %>
+<% end %>

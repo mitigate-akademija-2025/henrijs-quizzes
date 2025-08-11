@@ -10,17 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_10_072931) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_11_195107) do
+  create_table "feedbacks", force: :cascade do |t|
+    t.integer "quiz_id", null: false
+    t.integer "user_id", null: false
+    t.text "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["quiz_id"], name: "index_feedbacks_on_quiz_id"
+    t.index ["user_id"], name: "index_feedbacks_on_user_id"
+  end
+
   create_table "games", force: :cascade do |t|
     t.integer "user_id"
     t.integer "quiz_id", null: false
-    t.integer "last_question_id"
     t.integer "score"
     t.string "share_token"
     t.datetime "finished_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["last_question_id"], name: "index_games_on_last_question_id"
     t.index ["quiz_id"], name: "index_games_on_quiz_id"
     t.index ["share_token"], name: "index_games_on_share_token", unique: true
     t.index ["user_id"], name: "index_games_on_user_id"
@@ -83,6 +91,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_072931) do
     t.datetime "locked_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "admin", default: false, null: false
+    t.index ["admin"], name: "index_users_on_admin"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -90,12 +100,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_072931) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
-  add_foreign_key "games", "questions", column: "last_question_id"
-  add_foreign_key "games", "quizzes"
+  add_foreign_key "feedbacks", "quizzes", on_delete: :cascade
+  add_foreign_key "feedbacks", "users"
+  add_foreign_key "games", "quizzes", on_delete: :cascade
   add_foreign_key "games", "users"
   add_foreign_key "guesses", "games"
-  add_foreign_key "guesses", "options"
-  add_foreign_key "options", "questions"
-  add_foreign_key "questions", "quizzes"
+  add_foreign_key "guesses", "options", on_delete: :cascade
+  add_foreign_key "options", "questions", on_delete: :cascade
+  add_foreign_key "questions", "quizzes", on_delete: :cascade
   add_foreign_key "quizzes", "users"
 end

@@ -1,6 +1,6 @@
 class Question < ApplicationRecord
-  belongs_to :quiz
-  has_many :options, dependent: :destroy
+  has_many :options, inverse_of: :question, dependent: :destroy
+  belongs_to :quiz, inverse_of: :questions
   accepts_nested_attributes_for :options, allow_destroy: true
   validates :content, presence: true
 end

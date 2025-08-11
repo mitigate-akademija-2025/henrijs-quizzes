@@ -1,0 +1,12 @@
+<li>
+  <% if current_page.last? %>
+    <span class="inline-flex items-center rounded-lg border border-gray-100 bg-gray-50 px-3 py-1.5 text-sm text-gray-400 cursor-not-allowed">
+      Next&nbsp;&#8594;
+    </span>
+  <% else %>
+    <%= link_to raw("Next&nbsp;&#8594;"), url,
+          class: "inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50",
+          data: { turbo_frame: "completed_quizzes" },
+          rel: "next" %>
+  <% end %>
+</li>

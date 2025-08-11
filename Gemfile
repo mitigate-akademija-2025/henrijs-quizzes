@@ -71,3 +71,7 @@ gem "foreman", "~> 0.90.0"
 gem "rubocop-rails", require: false
 
 gem "devise", "~> 4.9"
+
+gem "kaminari"
+
+gem "pundit"

@@ -1,0 +1,37 @@
+<!-- PROFILE CARD -->
+<div class="mx-auto max-w-2xl">
+  <section class="relative overflow-hidden rounded-2xl border border-gray-200/70 bg-white/80 p-6 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/60">
+    <!-- subtle gradient accent -->
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-blue-500/40 via-cyan-500/40 to-violet-500/40"></div>
+
+    <header class="mb-5 flex items-start justify-between">
+      <div class="flex items-center gap-3">
+        <div>
+          <h2 class="text-base font-semibold text-gray-900">Profile</h2>
+          <p class="text-xs text-gray-500">Update your username, email, and password.</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="mt-2">
+      <%= render "devise/registrations/edit_form",
+                 resource: current_user,
+                 resource_name: :user %>
+    </div>
+  </section>
+</div>
+
+<!-- COMPLETED GAMES CARD -->
+<div class="mx-auto mt-6 max-w-2xl">
+  <section class="relative overflow-hidden rounded-2xl border border-gray-200/70 bg-white/80 p-6 shadow-sm">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-emerald-500/40 via-teal-500/40 to-blue-500/40"></div>
+    <header class="mb-4">
+      <h3 class="text-base font-semibold text-gray-900">Completed Games</h3>
+      <p class="text-xs text-gray-500">Your most recent attempts with scores and progress.</p>
+    </header>
+
+    <turbo-frame id="profile_games">
+      <%= render "profiles/completed_games", games: @games, frame_id: "profile_games" %>
+    </turbo-frame>
+  </section>
+</div>
