@@ -3,6 +3,7 @@ class FeedbacksController < ApplicationController
   before_action :authenticate_user!
   before_action :set_quiz
   before_action :ensure_completed_quiz!, only: [ :create, :update ]
+  before_action :set_feedback, only: [ :update ]
 
   def create
     @feedback = @quiz.feedbacks.find_or_initialize_by(user: current_user)
@@ -10,27 +11,38 @@ class FeedbacksController < ApplicationController
 
     if @feedback.save
       respond_to do |format|
-        format.turbo_stream
+        format.turbo_stream do
+          flash.now[:notice] = "Thank you for your feedback!"
+          render :create
+        end
         format.html { redirect_to @quiz, notice: "Thank you for your feedback!" }
       end
     else
       respond_to do |format|
-        format.turbo_stream
+        format.turbo_stream do
+          flash.now[:alert] = @feedback.errors.full_messages.to_sentence
+          render :create
+        end
         format.html { redirect_to @quiz, alert: @feedback.errors.full_messages.to_sentence }
       end
     end
   end
 
   def update
-    @feedback = @quiz.feedbacks.find_by!(user: current_user)
     if @feedback.update(feedback_params)
       respond_to do |format|
-        format.turbo_stream
+        format.turbo_stream do
+          flash.now[:notice] = "Your feedback has been updated."
+          render :update
+        end
         format.html { redirect_to @quiz, notice: "Your feedback has been updated." }
       end
     else
       respond_to do |format|
-        format.turbo_stream
+        format.turbo_stream do
+          flash.now[:alert] = @feedback.errors.full_messages.to_sentence
+          render :update
+        end
         format.html { redirect_to @quiz, alert: @feedback.errors.full_messages.to_sentence }
       end
     end
@@ -46,6 +58,10 @@ class FeedbacksController < ApplicationController
     end
   end
 
+  def set_feedback
+    @feedback = @quiz.feedbacks.find_by!(id: params[:id], user: current_user)
+  end
+
   def ensure_completed_quiz!
     has_finished = Game.where(quiz_id: @quiz.id, user_id: current_user.id)
                        .where.not(finished_at: nil)
@@ -56,6 +72,6 @@ class FeedbacksController < ApplicationController
   end
 
   def feedback_params
-    p = params.require(:feedback).permit(:comment)
+    params.require(:feedback).permit(:comment)
   end
 end

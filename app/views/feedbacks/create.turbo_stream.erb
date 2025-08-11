@@ -1,5 +1,9 @@
 <%= turbo_stream.replace dom_id(@quiz, :feedback) do %>
-  <%= render "feedbacks/form",
-        quiz: @quiz,
-        feedback: @quiz.feedbacks.find_by(user: current_user) || @quiz.feedbacks.new %>
+  <%= render "feedbacks/form", quiz: @quiz, feedback: @feedback %>
+<% end %>
+
+<%= turbo_stream.replace "flash-messages" do %>
+  <div id="flash-messages" class="mx-auto w-full max-w-md space-y-2">
+    <%= render partial: "shared/flash", formats: [:html] %>
+  </div>
 <% end %>
