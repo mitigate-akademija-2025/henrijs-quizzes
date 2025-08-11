@@ -1,0 +1,12 @@
+<li>
+  <% if page.current? %>
+    <span aria-current="page"
+          class="inline-flex items-center rounded-lg border border-blue-600 bg-blue-600 px-3 py-1.5 text-sm font-medium text-white">
+      <%= page.number %>
+    </span>
+  <% else %>
+    <%= link_to page.number, url,
+          class: "inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 hover:text-gray-900",
+          data: { turbo_frame: "completed_quizzes" } %>
+  <% end %>
+</li>

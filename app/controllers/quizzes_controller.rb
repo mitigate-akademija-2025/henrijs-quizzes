@@ -1,7 +1,7 @@
 class QuizzesController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show]
-  before_action :set_quiz, only: [:show, :edit, :update, :destroy]
-  before_action :authorize_quiz!, only: [:edit, :update, :destroy]
+  before_action :authenticate_user!, except: [ :index, :show ]
+  before_action :set_quiz, only: [ :show, :edit, :update, :destroy ]
+  before_action :authorize_quiz!, only: [ :edit, :update, :destroy ]
 
   def index
     @quizzes = Quiz.includes(:user).order(created_at: :desc)
@@ -62,7 +62,7 @@ class QuizzesController < ApplicationController
       :title, :description,
       questions_attributes: [
         :id, :content, :_destroy,
-        { options_attributes: [:id, :content, :correct, :_destroy] }
+        { options_attributes: [ :id, :content, :correct, :_destroy ] }
       ]
     )
   end

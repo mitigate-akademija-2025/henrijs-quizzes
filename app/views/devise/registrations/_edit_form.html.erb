@@ -1,0 +1,54 @@
+<h2 class="sr-only">Edit Profile</h2>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name),
+             html: { method: :put, class: "space-y-6" }) do |f| %>
+
+  <div class="space-y-1.5">
+    <h3 class="text-base font-semibold text-gray-900">Username</h3>
+    <%= f.text_field :username,
+          placeholder: "Your display name",
+          class: "w-full rounded-xl border border-gray-300 bg-white/90 px-3 py-2.5 shadow-sm
+                  placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500" %>
+  </div>
+
+  <div class="space-y-1.5">
+    <h3 class="text-base font-semibold text-gray-900">Email</h3>
+    <%= f.email_field :email,
+          placeholder: "you@example.com",
+          class: "w-full rounded-xl border border-gray-300 bg-white/90 px-3 py-2.5 shadow-sm
+                  placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500" %>
+  </div>
+
+  <div class="space-y-1.5">
+    <h3 class="text-base font-semibold text-gray-900">New Password</h3>
+    <%= f.password_field :password, autocomplete: "new-password",
+          placeholder: "Leave blank to keep current",
+          class: "w-full rounded-xl border border-gray-300 bg-white/90 px-3 py-2.5 shadow-sm
+                  placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500" %>
+    <p class="text-xs text-gray-500">Leave blank if you don’t want to change it.</p>
+  </div>
+
+  <div class="space-y-1.5">
+    <h3 class="text-base font-semibold text-gray-900">Confirm New Password</h3>
+    <%= f.password_field :password_confirmation,
+          placeholder: "Re-enter new password",
+          class: "w-full rounded-xl border border-gray-300 bg-white/90 px-3 py-2.5 shadow-sm
+                  placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500" %>
+  </div>
+
+  <div class="space-y-1.5">
+    <h3 class="text-base font-semibold text-gray-900">Current Password</h3>
+    <%= f.password_field :current_password, required: true,
+          placeholder: "Required to save changes",
+          class: "w-full rounded-xl border border-gray-300 bg-white/90 px-3 py-2.5 shadow-sm
+                  placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500" %>
+  </div>
+
+  <div class="mt-6 flex items-center justify-end gap-3">
+    <%= link_to "Cancel", root_path,
+          class: "rounded-lg border border-gray-300 bg-white/80 px-4 py-2 text-gray-700 hover:bg-gray-50" %>
+
+    <%= f.submit "Save changes",
+          class: "rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700" %>
+  </div>
+<% end %>

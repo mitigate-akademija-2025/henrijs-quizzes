@@ -2,7 +2,6 @@ class FeedbacksController < ApplicationController
   respond_to :html, :turbo_stream
   before_action :authenticate_user!
   before_action :set_quiz
-  before_action :ensure_completed_quiz!, only: [ :create ]
 
   PAGE_SIZE = 10
 
@@ -45,13 +44,6 @@ class FeedbacksController < ApplicationController
     else
       @quiz = Feedback.find(params[:id]).quiz
     end
-  end
-
-  def set_feedback
-    @feedback = @quiz.feedbacks.find_by!(id: params[:id], user: current_user)
-  end
-
-  def ensure_completed_quiz!
   end
 
   def feedback_params

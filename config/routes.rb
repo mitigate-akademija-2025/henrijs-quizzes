@@ -17,4 +17,9 @@ Rails.application.routes.draw do
     resources :games, only: [ :new, :create, :show ], shallow: true
     resources :feedbacks, only: [ :index, :create, :update ]
   end
+
+  resource :profile, only: [:show] do
+    get :completed_games
+  end
+
 end
