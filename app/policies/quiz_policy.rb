@@ -14,5 +14,4 @@ class QuizPolicy < ApplicationPolicy
 
   def owner?  = user.present? && record.user_id == user.id
   def admin?  = user&.admin?
-
 end

@@ -1,32 +1,79 @@
-<!-- app/views/invitations/new.html.erb -->
 <%= turbo_frame_tag "modal" do %>
-  <div class="fixed inset-0 z-40 bg-black/40" data-controller="dismiss" data-action="click->dismiss#close"></div>
+  <!-- Backdrop -->
+  <div class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" data-controller="dismiss" data-action="click->dismiss#close"></div>
+
+  <!-- Modal -->
   <div class="fixed inset-0 z-50 grid place-items-center p-4">
-    <div class="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-gray-200">
-      <div class="flex items-center justify-between p-4 border-b">
-        <h3 class="text-lg font-semibold">Invite players</h3>
-        <%= link_to "✕", "#", data: { action: "dismiss#close" }, class: "text-gray-500 hover:text-gray-700" %>
+    <div class="w-full max-w-xl bg-white rounded-2xl shadow-2xl ring-1 ring-black/5">
+      <!-- Header -->
+      <div class="flex items-start gap-3 p-5 border-b">
+        <div class="h-12 w-12 rounded-xl bg-indigo-100 text-indigo-700 grid place-items-center">
+          <!-- paper-plane -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21.44 2.56a1 1 0 0 0-1.05-.22L3.7 9.19a1 1 0 0 0 .07 1.87l6.18 2.25 2.25 6.18a1 1 0 0 0 1.87.07l6.85-16.69a1 1 0 0 0-.48-1.31ZM12.9 20.48l-1.79-4.9 3.11-3.11-4.9 1.79-4.36-1.59L20.3 3.7 12.9 20.48Z"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h3 class="text-lg font-semibold text-gray-900">Invite players</h3>
+          <p class="text-sm text-gray-500">Share the link or send email invites.</p>
+        </div>
+        <%= link_to "✕", "#", data: { action: "dismiss#close" }, class: "text-gray-500 hover:text-gray-700 p-1" %>
       </div>
 
-      <div class="p-4">
-        <%= form_with url: quiz_invitations_path(@quiz), scope: :invitation do |f| %>
-          <div class="space-y-3">
-            <div>
-              <%= f.label :emails, "Emails (comma/space separated)", class: "block text-sm font-medium text-gray-700" %>
-              <%= f.text_area :emails, rows: 3, placeholder: "alice@example.com, bob@example.com",
-                    class: "mt-1 w-full rounded-lg border-gray-300" %>
-            </div>
+      <div class="p-5 space-y-6">
+        <!-- Share link (Notion/Slack style) -->
+        <div class="space-y-2">
+          <label class="text-xs font-medium text-gray-700">Quiz link</label>
+          <div class="flex items-center gap-2 rounded-xl border border-gray-300 bg-gray-50 px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500">
+            <input
+              type="text"
+              value="<%= new_quiz_game_url(@quiz) %>"
+              readonly
+              class="flex-1 bg-transparent text-sm text-gray-900 truncate outline-none"
+              aria-label="Quiz start link"
+              id="share-link-input"
+            >
+            <button
+              type="button"
+              data-controller="clipboard"
+              data-clipboard-text-value="<%= new_quiz_game_url(@quiz) %>"
+              data-action="clipboard#copy"
+              class="shrink-0 inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium
+                     bg-white hover:bg-gray-100 border border-gray-300 transition">
+              Copy
+            </button>
+          </div>
+          <p class="text-xs text-gray-500">Anyone with the link can start the quiz.</p>
+        </div>
 
-            <div>
-              <%= f.label :message, "Optional message", class: "block text-sm font-medium text-gray-700" %>
-              <%= f.text_area :message, rows: 3, class: "mt-1 w-full rounded-lg border-gray-300" %>
-            </div>
+        <!-- Email invites -->
+        <%= form_with url: quiz_invitations_path(@quiz), scope: :invitation, class: "space-y-4" do |f| %>
+          <div class="relative">
+      
+            <%= f.text_area :emails,
+                  rows: 3,
+                  placeholder: "henrijs@example.com, indrikis@example.com",
+                  class: "mt-1 w-full rounded-xl border border-gray-300 bg-white px-2 py-2 text-sm
+                          placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+            <p class="mt-1 text-xs text-gray-500">Separate addresses with commas or spaces.</p>
+          </div>
 
-            <div class="flex justify-end gap-2 pt-2">
+          <div>
+            <%= f.label :message, "Message (optional)", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.text_area :message,
+                  rows: 3,
+                  placeholder: "LMAO MADE MY DAY! TRY THIS OUT FR (GONE WRONG)",
+                  class: "mt-1 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm
+                          placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <p class="text-xs text-gray-500">Emails are sent from your configured sender.</p>
+            <div class="flex gap-2">
               <%= link_to "Cancel", "#", data: { action: "dismiss#close" },
-                    class: "px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700" %>
-              <%= f.submit "Send invites",
-                    class: "px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700" %>
+                    class: "px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50" %>
+              <%= f.submit "Send invites", name: nil,
+                    class: "px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 shadow-sm" %>
             </div>
           </div>
         <% end %>
