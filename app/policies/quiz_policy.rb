@@ -4,13 +4,15 @@ class QuizPolicy < ApplicationPolicy
   def destroy? = admin? || owner?
   def show?    = true
 
+  class Scope < Scope
+    def resolve
+      scope.all
+    end
+  end
+
   private
 
-  def owner?
-    user.present? && record.user_id == user.id
-  end
+  def owner?  = user.present? && record.user_id == user.id
+  def admin?  = user&.admin?
 
-  def admin?
-    user&.admin?
-  end
 end
