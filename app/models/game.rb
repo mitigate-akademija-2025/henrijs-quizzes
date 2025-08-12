@@ -7,24 +7,60 @@ class Game < ApplicationRecord
   def to_param = share_token
 
   def calculate_score
-    score = 0
+    questions = quiz.questions.includes(:options)
+    game_guesses = guesses.includes(:option).to_a
+    guesses_by_qid = game_guesses.group_by(&:question_id)
 
-    quiz.questions.each do |question|
-      correct_ids = question.options.where(correct: true).pluck(:id).sort
-      chosen_ids  = guesses
-                    .where(option_id: question.options.pluck(:id))
-                    .pluck(:option_id)
-                    .sort
+    total_score = 0
 
-      score += 1 if correct_ids == chosen_ids
+    questions.each do |question|
+      case question
+      when MultipleChoiceQuestion
+        # Correct set
+        correct_option_ids = question.options
+                                     .select { |opt| opt.correct }
+                                     .map(&:id)
+                                     .sort
+
+        # Chosen set
+        chosen_option_ids = guesses_by_qid.fetch(question.id, [])
+                                          .map(&:option_id)
+                                          .sort
+
+        if chosen_option_ids == correct_option_ids
+          total_score += question.points
+        end
+
+      when TextQuestion
+        # model layer ensures that only one text guess is possible
+        text_guess = guesses_by_qid.fetch(question.id, [])
+
+        if text_guess
+          submitted_text = normalize_answer(text_guess.answer_text)
+          # assume all options for text questions are acceptable
+          acceptable_texts = question.options
+                                     .map { |opt| normalize_answer(opt.content) }
+
+          if acceptable_texts.include?(submitted_text)
+            total_score += question.points
+          end
+        end
+
+      else
+        # unknown question type
+      end
     end
 
-    score
+    total_score
   end
 
   private
 
   def ensure_share_token
     self.share_token ||= SecureRandom.hex(16)
+  end
+
+  def normalize_answer(answer)
+    answer.to_s.strip.downcase.gsub(/\s+/, " ")
   end
 end

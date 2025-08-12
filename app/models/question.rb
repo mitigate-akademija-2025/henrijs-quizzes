@@ -1,6 +1,17 @@
 class Question < ApplicationRecord
-  has_many :options, inverse_of: :question, dependent: :destroy
-  belongs_to :quiz, inverse_of: :questions
-  accepts_nested_attributes_for :options, allow_destroy: true
+  belongs_to :quiz
+  has_many :guesses, dependent: :destroy
+  has_many :options, dependent: :destroy
+
   validates :content, presence: true
+  validates :points, numericality: { only_integer: true, greater_than: 0 }
+  validates :position, numericality: { only_integer: true, greater_than: 0 }
+end
+
+class MultipleChoiceQuestion < Question
+  validates :max_selections, numericality: { only_integer: true, greater_than: 0 }
+end
+
+class TextQuestion < Question
+  validates :max_selections, absence: true
 end

@@ -1,11 +1,11 @@
 class CreateGuesses < ActiveRecord::Migration[8.0]
   def change
     create_table :guesses do |t|
-      t.references :game,     null: false, foreign_key: true
-      t.references :question, null: false, foreign_key: true
-      t.references :option,   null: true,  foreign_key: true
-      t.text    :answer_text
-      t.string  :type, null: false
+      t.references :game, null: false, foreign_key: { on_delete: :cascade }
+      t.references :question, null: false, foreign_key: { on_delete: :cascade }
+      t.references :option, null: true,  foreign_key: { on_delete: :cascade }
+      t.text :answer_text
+      t.string :type, null: false
 
       t.index [ :game_id, :option_id ],
               unique: true,
