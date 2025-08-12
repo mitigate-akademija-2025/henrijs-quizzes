@@ -122,7 +122,7 @@
               <td class="px-4 py-3"><span class="font-medium"><%= g.score %></span> / <%= @total_questions %></td>
 
               <td class="px-4 py-3 text-gray-700">
-                <%= distance_of_time_in_words(g.created_at, g.finished_at) %>
+                <%= distance_of_time_in_words(g.started_at, g.finished_at) %>
               </td>
 
               <td class="px-4 py-3 text-gray-500">

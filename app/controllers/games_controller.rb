@@ -1,15 +1,23 @@
 require "csv"
+
 class GamesController < ApplicationController
   before_action :set_quiz, only: [ :new, :create, :export ]
   before_action :set_game, only: [ :show ]
 
   def new
+    session["game_started_at_#{@quiz.id}"] = Time.current.to_i
     @game = @quiz.games.build
   end
 
   # submit game
   def create
-    @game = @quiz.games.create!(user: (current_user if user_signed_in?))
+    ts = session.delete("game_started_at_#{@quiz.id}")
+    started_at = ts ? Time.zone.at(ts.to_i) : Time.current
+
+    @game = @quiz.games.create!(
+      user: (current_user if user_signed_in?),
+      started_at: started_at || Time.current
+    )
 
     # store guesses
     params[:answers].each_value do |option_ids|
@@ -18,10 +26,10 @@ class GamesController < ApplicationController
       end
     end
 
-    # calculate score
+    # finish & score
     @game.update!(
       score: @game.calculate_score,
-      finished_at: Time.current,
+      finished_at: Time.current
     )
 
     redirect_to game_path(@game), notice: "Pārbaude pabeigta."
@@ -42,17 +50,16 @@ class GamesController < ApplicationController
   end
 
   def export
-    games = @quiz.games.where.not(finished_at: nil).includes(:user)
+    games = @quiz.games.where.not(finished_at: nil).includes(:user).order(:finished_at)
 
     csv = CSV.generate(headers: true) do |c|
       c << [ "Game ID", "Player", "Score", "Duration (seconds)", "Finished (timestamp)" ]
       games.find_each do |g|
-        duration = g.finished_at && g.created_at ? (g.finished_at - g.created_at).to_i : nil
         c << [
-          g.id,
+          g.share_token,
           (g.user&.username.presence || "Guest"),
           g.score,
-          duration,
+          (g.finished_at - g.started_at).to_i,
           g.finished_at&.iso8601
         ]
       end

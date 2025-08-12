@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_11_195107) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_12_111210) do
   create_table "feedbacks", force: :cascade do |t|
     t.integer "quiz_id", null: false
     t.integer "user_id", null: false
@@ -29,6 +29,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_11_195107) do
     t.datetime "finished_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "started_at"
     t.index ["quiz_id"], name: "index_games_on_quiz_id"
     t.index ["share_token"], name: "index_games_on_share_token", unique: true
     t.index ["user_id"], name: "index_games_on_user_id"
