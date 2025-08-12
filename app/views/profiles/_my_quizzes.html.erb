@@ -1,0 +1,77 @@
+<section class="relative overflow-hidden rounded-2xl border border-gray-200/70 bg-white/80 p-6 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/60">
+  <div class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-violet-500/40 via-indigo-500/40 to-cyan-500/40"></div>
+
+  <!-- Header -->
+  <div class="mb-4 flex items-start justify-between">
+    <div>
+      <h3 class="text-base font-semibold text-gray-900">My Quizzes</h3>
+      <p class="text-xs text-gray-500">Your quizzes with quick actions and share tools.</p>
+    </div>
+  </div>
+
+  <% if quizzes.any? %>
+    <!-- Card grid -->
+    <ul class="grid gap-3 sm:gap-4">
+      <% quizzes.each do |q| %>
+        <% finished_attempts = q.games.count { |g| g.finished_at.present? } %>
+        <% last_played_at   = q.games.map(&:finished_at).compact.max %>
+
+        <li class="group rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition
+                   hover:shadow-md hover:-translate-y-0.5">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <!-- Left: title & meta -->
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <%= link_to q.title, quiz_path(q),
+                      class: "truncate text-sm font-semibold text-gray-900 hover:underline" %>
+                <span class="shrink-0 inline-flex items-center rounded-full bg-gray-100 text-gray-700 text-[11px] px-2 py-0.5">
+                  <%= finished_attempts %> attempts
+                </span>
+              </div>
+
+              <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                <span>Created <%= time_ago_in_words(q.created_at) %> ago</span>
+                <% if last_played_at %>
+                  <span class="hidden sm:inline">•</span>
+                  <span>Last played <%= time_ago_in_words(last_played_at) %> ago</span>
+                <% end %>
+                <span class="hidden sm:inline">•</span>
+                <span><%= pluralize(q.questions.size, "question") %></span>
+              </div>
+            </div>
+
+            <!-- Right: actions -->
+            <div class="flex flex-wrap items-center gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+              <%= link_to "View", quiz_path(q),
+                    class: "rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-800 hover:bg-gray-50" %>
+
+              <% if policy(q).update? %>
+                <%= link_to "Edit", edit_quiz_path(q),
+                      class: "rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-800 hover:bg-gray-50" %>
+              <% end %>
+
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+
+    <div class="mt-4">
+      <%= paginate quizzes, param_name: :q_page %>
+    </div>
+  <% else %>
+    <!-- Empty state -->
+    <div class="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center">
+      <div class="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-full bg-indigo-50 text-indigo-600">
+        <!-- sparkles -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M11 2a1 1 0 0 1 2 0v2h2a1 1 0 1 1 0 2h-2v2a1 1 0 1 1-2 0V6H9a1 1 0 1 1 0-2h2V2Zm6.5 6a1 1 0 0 1 .92.61l.54 1.27 1.27.54a1 1 0 0 1 0 1.84l-1.27.54-.54 1.27a1 1 0 0 1-1.84 0l-.54-1.27-1.27-.54a1 1 0 0 1 0-1.84l1.27-.54.54-1.27A1 1 0 0 1 17.5 8ZM6 14a1 1 0 0 1 .92.61l.3.72.73.3a1 1 0 0 1 0 1.84l-.73.3-.3.72a1 1 0 0 1-1.84 0l-.3-.72-.72-.3a1 1 0 0 1 0-1.84l.72-.3.3-.72A1 1 0 0 1 6 14Z"/></svg>
+      </div>
+      <h4 class="text-sm font-semibold text-gray-900">No quizzes yet</h4>
+      <p class="mt-1 text-xs text-gray-600">Create your first quiz and share it with others.</p>
+      <% if current_user == user %>
+        <%= link_to "Create a quiz", new_quiz_path,
+              class: "mt-4 inline-block rounded-xl bg-indigo-600 px-3 py-1.5 text-white text-xs hover:bg-indigo-700 shadow-sm" %>
+      <% end %>
+    </div>
+  <% end %>
+</section>

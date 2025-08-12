@@ -18,7 +18,12 @@ class ProfilesController < ApplicationController
                  .includes(quiz: :user)
                  .order(finished_at: :desc, id: :desc)
                  .page(params[:page]).per(10)
-  end
+
+    @quizzes = @user.quizzes
+                .includes(:games)
+                .order(created_at: :desc)
+                .page(params[:q_page]).per(10)
+end
 
   private
   def set_user

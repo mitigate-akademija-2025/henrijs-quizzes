@@ -67,25 +67,28 @@
   <% end %>
 </div>
 
-<section class="mt-8">
-  <h2 class="text-lg font-semibold text-gray-900">Tavas atsauksmes</h2>
+<% if @game.user == current_user %>
+  <section class="mt-8">
+    <h2 class="text-lg font-semibold text-gray-900">Tavas atsauksmes</h2>
 
-  <ul id="feedbacks" class="mt-3 space-y-3">
-    <%= render @feedbacks %> <%# uses app/views/feedbacks/_feedback.html.erb %>
-  </ul>
+    <ul id="feedbacks" class="mt-3 space-y-3">
+      <%= render @feedbacks %> <%# uses app/views/feedbacks/_feedback.html.erb %>
+    </ul>
 
-  <div class="mt-4">
-    <%= turbo_frame_tag dom_id(@quiz, :feedback) do %>
-      <%= render "feedbacks/form", quiz: @quiz, feedback: @quiz.feedbacks.new %>
-    <% end %>
-  </div>
-</section>
+    <div class="mt-4">
+      <%= turbo_frame_tag dom_id(@quiz, :feedback) do %>
+        <%= render "feedbacks/form", quiz: @quiz, feedback: @quiz.feedbacks.new %>
+      <% end %>
+    </div>
+  </section>
+<% end %>
 
 <!-- Footer actions -->
-<footer class="mt-8 border-t border-gray-200 pt-4">
-  <div class="flex justify-end">
-    <%= link_to "← Pārbaudes", quizzes_path,
-          class: "inline-flex items-center rounded-md border px-4 py-2 hover:bg-gray-50" %>
+<footer class="mt-8 pt-4">
+  <div class="flex">
+    <%= link_to "Quiz Statistics", quiz_path(@quiz),
+          class: "inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-1.5
+                  text-gray-800 hover:bg-gray-50 shadow-sm transition" %>
   </div>
 </footer>
 
