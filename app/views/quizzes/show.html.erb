@@ -140,8 +140,20 @@
     </div>
   </section>
 
+  <div class="mb-3 flex items-center justify-between">
+    <%= link_to export_quiz_games_path(@quiz, format: :csv),
+      data: { turbo: false },
+      class: "inline-flex items-center gap-2 rounded-lg bg-gray-900 text-white px-3 py-1.5 shadow-sm hover:bg-gray-800 transition" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 3a1 1 0 0 1 1 1v8.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.42L11 12.6V4a1 1 0 0 1 1-1ZM5 19a1 1 0 0 0 1 1h12a1 1 0 1 0 0-2H6a1 1 0 0 0-1 1Z"/>
+      </svg>
+      Export CSV
+    <% end %>
+  </div>
+
+
   <section class="mt-8">
-    <h2 class="text-lg font-semibold text-gray-900">Atsauksmes</h2>
+    <h2 class="text-lg font-semibold text-gray-900">Feedbacks</h2>
 
     <%= turbo_frame_tag dom_id(@quiz, :feedbacks_frame),
                         src: quiz_feedbacks_path(@quiz) do %>

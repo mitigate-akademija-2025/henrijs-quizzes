@@ -1,5 +1,6 @@
+require "csv"
 class GamesController < ApplicationController
-  before_action :set_quiz, only: [ :new, :create ]
+  before_action :set_quiz, only: [ :new, :create, :export ]
   before_action :set_game, only: [ :show ]
 
   def new
@@ -38,6 +39,27 @@ class GamesController < ApplicationController
       }
     end
     @feedbacks = @quiz.feedbacks.where(user: current_user).order(created_at: :desc)
+  end
+
+  def export
+    games = @quiz.games.where.not(finished_at: nil).includes(:user)
+
+    csv = CSV.generate(headers: true) do |c|
+      c << [ "Game ID", "Player", "Score", "Duration (seconds)", "Finished (timestamp)" ]
+      games.find_each do |g|
+        duration = g.finished_at && g.created_at ? (g.finished_at - g.created_at).to_i : nil
+        c << [
+          g.id,
+          (g.user&.username.presence || "Guest"),
+          g.score,
+          duration,
+          g.finished_at&.iso8601
+        ]
+      end
+    end
+
+    filename = "quiz-#{@quiz.id}-results-#{Time.zone.now.strftime('%Y%m%d-%H%M')}.csv"
+    send_data csv, filename:, type: "text/csv"
   end
 
   private

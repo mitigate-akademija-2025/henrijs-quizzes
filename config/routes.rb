@@ -14,7 +14,9 @@ Rails.application.routes.draw do
   root "quizzes#index"
 
   resources :quizzes do
-    resources :games, only: [ :new, :create, :show ], shallow: true
+    resources :games, only: [ :new, :create, :show ], shallow: true do
+      collection { get :export }
+    end
     resources :feedbacks, only: [ :index, :create, :update ]
     resources :invitations, only: [ :new, :create ]
   end
