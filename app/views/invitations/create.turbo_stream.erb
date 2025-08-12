@@ -1,0 +1,7 @@
+<%= turbo_stream.update "modal", "" %>
+
+<%= turbo_stream.replace "flash-messages" do %>
+  <div id="flash-messages" class="mx-auto w-full max-w-md space-y-2">
+    <%= render "shared/flash" %>
+  </div>
+<% end %>

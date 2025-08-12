@@ -1,18 +1,14 @@
 <%= form_with model: quiz do |f| %>
   <div class="mx-auto max-w-3xl">
-    <!-- Move the Stimulus controller to wrap the whole card so the footer button is in scope -->
     <section
       data-controller="nested"
       data-nested-index-value="<%= f.object.questions.size %>"
       class="relative overflow-hidden rounded-2xl border border-gray-200/70 bg-white/80 p-6 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/60">
 
-      <!-- accent line -->
       <div class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-blue-500/40 via-cyan-500/40 to-violet-500/40"></div>
 
-      <!-- Header -->
       <header class="mb-6 flex items-center gap-3">
         <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600/10 text-blue-700 ring-1 ring-inset ring-blue-600/20">
-          <!-- sparkles icon -->
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M12 3l1.4 3.7L17 8l-3.6 1.3L12 13l-1.4-3.7L7 8l3.6-1.3L12 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
             <path d="M18 14l.9 2.3L21 17l-2.1.7L18 20l-.9-2.3L15 17l2.1-.7L18 14Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
@@ -28,7 +24,6 @@
         </div>
       </header>
 
-      <!-- Errors -->
       <% if f.object.errors.any? %>
         <div class="mb-6 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
           <p class="font-medium">Please fix the following:</p>
@@ -41,7 +36,6 @@
       <% end %>
 
       <div class="space-y-6">
-        <!-- Title -->
         <div class="space-y-1.5">
           <label class="text-base font-semibold text-gray-900">Title</label>
           <%= f.text_field :title,
@@ -50,7 +44,6 @@
                         placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500" %>
         </div>
 
-        <!-- Description -->
         <div class="space-y-1.5">
           <label class="text-base font-semibold text-gray-900">Description</label>
           <%= f.text_area :description,
@@ -68,7 +61,6 @@
           <p class="text-xs text-gray-500">Keep it brief – what will people learn or test?</p>
         </div>
 
-        <!-- Questions -->
         <div>
           <div class="mb-2 flex items-center justify-between">
             <h3 class="text-base font-semibold text-gray-900">Questions</h3>
@@ -80,7 +72,7 @@
             <% end %>
           </div>
 
-          <!-- Template used by Stimulus -->
+          <!-- Stimulus -->
           <template data-nested-target="template">
             <%= f.fields_for :questions, Question.new, child_index: "NEW_Q" do |qf| %>
               <%= render "questions/fields", f: qf, new_record: true %>
@@ -88,7 +80,6 @@
           </template>
         </div>
 
-        <!-- Footer actions (inside the controller’s scope so the button works) -->
         <div class="mt-6 flex items-center justify-end gap-3">
           <%= link_to quizzes_path,
                 class: "rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-700 shadow-sm hover:bg-gray-50" do %>

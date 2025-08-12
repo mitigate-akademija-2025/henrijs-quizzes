@@ -1,24 +1,18 @@
-# README
+# Henrijs Quizzes
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## 1. Install required gems:
+```bash
+bundle install
+```
 
-Things you may want to cover:
+## 2. Add `.env` file:
+```
+SMTP_USERNAME=
+SMTP_PASSWORD=
+MAIL_FROM=
+```
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## 3. Run with:
+```bash
+bundle exec bin/dev
+```

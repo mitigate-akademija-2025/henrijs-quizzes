@@ -10,17 +10,27 @@
       </div>
 
       <div class="flex gap-3">
-        <%= button_to "Delete Q",
-          @quiz,
-          method: :delete,
-          data: { turbo_confirm: "Are you sure you want to delete this quiz?" },
-          class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg" %>
-        <%= link_to "Edit Quiz", edit_quiz_path(@quiz),
-              class: "bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-sm" %>
+
+        <% if policy(@quiz).update? %>
+          <%= button_to "Delete Quiz",
+            @quiz,
+            method: :delete,
+            data: { turbo_confirm: "Are you sure you want to delete this quiz?" },
+            class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg" %>
+          <%= link_to "Edit Quiz", edit_quiz_path(@quiz),
+                class: "bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-sm" %>
+        <% end %>
+
         <%= link_to new_quiz_game_path(@quiz),
           class: "shrink-0 inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg shadow-sm transition" do %>
           Play Quiz
         <% end %>
+
+        <%= link_to "Invite to Play",
+          new_quiz_invitation_path(@quiz),
+          data: { turbo_frame: "modal" },
+          class: "shrink-0 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg shadow-sm transition" %>
+
       </div>
     </div>
 
@@ -66,9 +76,23 @@
   </header>
 
   <!-- Top results -->
-  <% if @games_count.to_i > 0 %>
-    <section>
-    <h2 class="text-xl font-semibold text-gray-800 mb-3"> Best Results</h2>
+<% if @games_count.to_i > 0 %>
+  <section>
+    <div class="mb-3">
+      <h2 class="text-xl font-semibold text-gray-800">Best Results</h2>
+
+      <div class="mt-2">
+        <%= link_to export_quiz_games_path(@quiz, format: :csv),
+          data: { turbo: false },
+          class: "inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-1.5
+                  text-gray-800 hover:bg-gray-50 shadow-sm transition" do %>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 3a1 1 0 0 1 1 1v8.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.42L11 12.6V4a1 1 0 0 1 1-1ZM5 19a1 1 0 0 0 1 1h12a1 1 0 1 0 0-2H6a1 1 0 0 0-1 1Z"/>
+          </svg>
+          <span class="font-medium">Export Result CSV</span>
+        <% end %>
+      </div>
+    </div>
 
     <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
       <table class="min-w-full text-sm">
@@ -112,7 +136,7 @@
               <td class="px-4 py-3"><span class="font-medium"><%= g.score %></span> / <%= @total_questions %></td>
 
               <td class="px-4 py-3 text-gray-700">
-                <%= distance_of_time_in_words(g.created_at, g.finished_at) %>
+                <%= distance_of_time_in_words(g.started_at, g.finished_at) %>
               </td>
 
               <td class="px-4 py-3 text-gray-500">
@@ -130,14 +154,18 @@
     </div>
   </section>
 
-  <section class="mt-8">
-    <h2 class="text-lg font-semibold text-gray-900">Atsauksmes</h2>
+  <% if @quiz.feedbacks.any? %>
+    <section class="mt-8">
+      <h2 class="text-lg font-semibold text-gray-900">Feedbacks</h2>
 
-    <%= turbo_frame_tag dom_id(@quiz, :feedbacks_frame),
-                        src: quiz_feedbacks_path(@quiz) do %>
-      <div class="py-6 text-center text-gray-500">Loading…</div>
-    <% end %>
-  </section>
+      <%= turbo_frame_tag dom_id(@quiz, :feedbacks_frame),
+                          src: quiz_feedbacks_path(@quiz) do %>
+        <div class="py-6 text-center text-gray-500">Loading…</div>
+      <% end %>
+    </section>
+  <% else %>
+    <p class="mt-2 text-sm text-gray-500">No feedbacks yet.</p>
+  <% end %>
 
   <% else %>
     <p class="mt-8 text-sm text-gray-500">No finished games yet.</p>

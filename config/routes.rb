@@ -14,10 +14,15 @@ Rails.application.routes.draw do
   root "quizzes#index"
 
   resources :quizzes do
-    resources :games, only: [ :new, :create, :show ], shallow: true
+    resources :games, only: [ :new, :create, :show ], shallow: true do
+      collection { get :export }
+    end
     resources :feedbacks, only: [ :index, :create, :update ]
+    resources :invitations, only: [ :new, :create ]
   end
 
-  resources :profiles, only: [ :index, :show ]
+  resources :profiles, only: [ :index, :show, :destroy ] do
+    member { patch :toggle_admin }
+  end
   get "/profile", to: "profiles#me", as: :my_profile
 end

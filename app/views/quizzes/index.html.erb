@@ -13,6 +13,44 @@
             class: "inline-flex items-center gap-2 bg-white text-black px-4 py-2 rounded-xl shadow-sm hover:bg-gray-100 transition" %>
     <% end %>
   </div>
+  <div class="mt-6">
+    <%= form_with url: quizzes_path, method: :get, local: true, class: "relative w-full md:max-w-xl" do |form| %>
+      <label for="search" class="sr-only">Search quizzes</label>
+
+      <!-- search icon -->
+      <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/70"
+          xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"/>
+      </svg>
+
+      <%= form.text_field(
+            :search,
+            value: params[:search],
+            id: "search",
+            placeholder: "Search quizzes…",
+            class: "h-12 w-full rounded-xl pl-11 pr-28 bg-white/20 backdrop-blur placeholder-white/70 text-white ring-1 ring-white/30 focus:ring-2 focus:ring-white/70 shadow-sm outline-none transition"
+          ) %>
+
+      <% if params[:search].present? %>
+        <%= link_to quizzes_path,
+              class: "absolute right-24 top-1/2 -translate-y-1/2 text-white/80 hover:text-white focus:outline-none" do %>
+          <span class="sr-only">Clear search</span>
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 18 18 6M6 6l12 12"/>
+          </svg>
+        <% end %>
+      <% end %>
+
+      <%= form.submit "Search",
+            name: nil,
+            class: "absolute right-2 top-1/2 -translate-y-1/2 bg-white text-black font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md hover:bg-gray-100 transition" %>
+    <% end %>
+  </div>
+
+
 </section>
 
 <% if @quizzes.any? %>
@@ -23,10 +61,10 @@
 
 <% else %>
   <div class="rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center">
-    <h2 class="text-lg font-semibold text-gray-800">No quizzes yet</h2>
+    <h2 class="text-lg font-semibold text-gray-800">No matching quizzes</h2>
     <p class="text-gray-600 mt-1">Be the first to create one and challenge others.</p>
     <% if user_signed_in? %>
-      <%= link_to "Create the first quiz", new_quiz_path,
+      <%= link_to "Create quiz", new_quiz_path,
             class: "inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm" %>
     <% end %>
   </div>

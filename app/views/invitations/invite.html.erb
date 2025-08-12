@@ -1,0 +1,8 @@
+<p>Hi!</p>
+<p><strong><%= @inviter.username %></strong> invited you to play the quiz “<%= @quiz.title %>”.</p>
+<% if @message.present? %>
+  <p><em>Message:</em> <%= simple_format(@message) %></p>
+<% end %>
+<p>
+  Start <a href="<%= @start_url %>">here</a>!
+</p>
