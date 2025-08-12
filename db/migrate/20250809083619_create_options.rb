@@ -6,10 +6,5 @@ class CreateOptions < ActiveRecord::Migration[8.0]
       t.references :question, null: false, foreign_key: { on_delete: :cascade }
       t.timestamps
     end
-
-    add_index :options, [:id, :question_id],
-              unique: true,
-              name: "idx_options_id_question_unique"
-    add_index :options, [ :question_id, :correct ], name: "index_options_on_question_and_correct"
   end
 end

@@ -4,7 +4,6 @@ class CreateQuizzes < ActiveRecord::Migration[8.0]
       t.string :title
       t.text :description
       t.references :user, null: false, foreign_key: { on_delete: :cascade }
-
       t.timestamps
     end
   end

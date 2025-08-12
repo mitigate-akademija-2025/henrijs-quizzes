@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_12_111210) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_10_134318) do
   create_table "feedbacks", force: :cascade do |t|
     t.integer "quiz_id", null: false
     t.integer "user_id", null: false
@@ -27,9 +27,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_111210) do
     t.integer "score"
     t.string "share_token"
     t.datetime "finished_at"
+    t.datetime "started_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "started_at"
     t.index ["quiz_id"], name: "index_games_on_quiz_id"
     t.index ["share_token"], name: "index_games_on_share_token", unique: true
     t.index ["user_id"], name: "index_games_on_user_id"
@@ -37,17 +37,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_111210) do
 
   create_table "guesses", force: :cascade do |t|
     t.integer "game_id", null: false
-    t.integer "option_id", null: false
+    t.integer "question_id", null: false
+    t.integer "option_id"
+    t.text "answer_text"
+    t.string "type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["game_id", "option_id"], name: "index_guesses_on_game_id_and_option_id", unique: true
+    t.index ["game_id", "option_id"], name: "idx_guesses_unique_game_option_choice", unique: true, where: "type = 'ChoiceGuess'"
+    t.index ["game_id", "question_id"], name: "idx_guesses_unique_game_question_text", unique: true, where: "type = 'TextGuess'"
     t.index ["game_id"], name: "index_guesses_on_game_id"
     t.index ["option_id"], name: "index_guesses_on_option_id"
+    t.index ["question_id"], name: "index_guesses_on_question_id"
+    t.check_constraint "CASE WHEN type = 'ChoiceGuess' THEN option_id IS NOT NULL AND answer_text IS NULL ELSE TRUE END", name: "guesses_choice_shape"
+    t.check_constraint "CASE WHEN type = 'TextGuess' THEN option_id IS NULL AND answer_text IS NOT NULL ELSE TRUE END", name: "guesses_text_shape"
   end
 
   create_table "options", force: :cascade do |t|
     t.text "content"
-    t.boolean "correct"
+    t.boolean "correct", default: false, null: false
     t.integer "question_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -56,10 +63,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_111210) do
 
   create_table "questions", force: :cascade do |t|
     t.text "content"
+    t.string "type", default: "ChoiceQuestion", null: false
+    t.integer "points", default: 1, null: false
+    t.integer "max_selections", default: 1, null: false
+    t.string "image_path"
+    t.integer "position"
     t.integer "quiz_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["quiz_id"], name: "index_questions_on_quiz_id"
+    t.index ["type"], name: "index_questions_on_type"
   end
 
   create_table "quizzes", force: :cascade do |t|
@@ -75,6 +88,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_111210) do
     t.string "email", null: false
     t.string "encrypted_password", null: false
     t.string "username", null: false
+    t.boolean "admin", default: false, null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
@@ -92,8 +106,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_111210) do
     t.datetime "locked_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "admin", default: false, null: false
-    t.index ["admin"], name: "index_users_on_admin"
+    t.index ["admin"], name: "index_users_on_admin", unique: true
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -102,12 +115,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_111210) do
   end
 
   add_foreign_key "feedbacks", "quizzes", on_delete: :cascade
-  add_foreign_key "feedbacks", "users"
+  add_foreign_key "feedbacks", "users", on_delete: :cascade
   add_foreign_key "games", "quizzes", on_delete: :cascade
-  add_foreign_key "games", "users"
-  add_foreign_key "guesses", "games"
+  add_foreign_key "games", "users", on_delete: :cascade
+  add_foreign_key "guesses", "games", on_delete: :cascade
   add_foreign_key "guesses", "options", on_delete: :cascade
+  add_foreign_key "guesses", "questions", on_delete: :cascade
   add_foreign_key "options", "questions", on_delete: :cascade
   add_foreign_key "questions", "quizzes", on_delete: :cascade
-  add_foreign_key "quizzes", "users"
+  add_foreign_key "quizzes", "users", on_delete: :cascade
 end

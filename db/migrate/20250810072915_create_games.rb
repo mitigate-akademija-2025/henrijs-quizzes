@@ -9,12 +9,7 @@ class CreateGames < ActiveRecord::Migration[8.0]
       t.datetime :started_at
       t.timestamps
     end
-  end
 
-  add_index :games, :share_token, unique: true
-  add_index :games, :user_id
-  add_index :games, :quiz_id
-  add_index :games, [ :id, :quiz_id ],
-            unique: true,
-            name: "idx_games_id_quiz_unique"
+    add_index :games, :share_token, unique: true
+  end
 end
