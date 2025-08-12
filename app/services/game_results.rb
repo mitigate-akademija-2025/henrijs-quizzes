@@ -21,7 +21,7 @@ class GameResults
     results = []
 
     questions.each do |q|
-      if q.is_a?(MultipleChoiceQuestion)
+      if q.is_a?(ChoiceQuestion)
         correct_ids = collect_correct_option_ids(q)
         chosen_ids  = collect_chosen_option_ids(guesses_by_qid[q.id])
         results << result_for_mcq(q, correct_ids, chosen_ids)

@@ -23,8 +23,12 @@ class QuizzesController < ApplicationController
 
     @games_count = @quiz.games.where.not(finished_at: nil).count
     @total_questions = @quiz.questions.size
+
+    @total_points = @quiz.questions.sum(:points)
+    @total_points = 1 if @total_points.zero?
+
     @average_score = @quiz.games.where.not(score: nil).average(:score).to_f
-    @average_percentage = @total_questions.positive? ? ((@average_score / @total_questions) * 100).round : 0
+    @average_percentage = @total_questions.positive? ? ((@average_score / @total_points) * 100).round : 0
 
     @feedbacks = @quiz.feedbacks.includes(:user).order(created_at: :desc)
   end
@@ -32,7 +36,11 @@ class QuizzesController < ApplicationController
   def new
     @quiz = current_user.quizzes.build
     authorize @quiz
-    q = @quiz.questions.build
+    q = @quiz.questions.build(
+      type: "ChoiceQuestion",
+      points: 1,
+      max_selections: 1
+    )
     2.times { q.options.build }
   end
 
@@ -70,11 +78,11 @@ class QuizzesController < ApplicationController
     @quiz = Quiz.includes(questions: :options).find(params[:id])
   end
 
-  def quiz_params
+    def quiz_params
     params.fetch(:quiz, {}).permit(
       :title, :description,
       questions_attributes: [
-        :id, :content, :_destroy,
+        :id, :type, :content, :points, :max_selections, :position, :image_path, :_destroy,
         { options_attributes: [ :id, :content, :correct, :_destroy ] }
       ]
     )
