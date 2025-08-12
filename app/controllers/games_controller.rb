@@ -11,41 +11,32 @@ class GamesController < ApplicationController
 
   # submit game
   def create
-    ts = session.delete("game_started_at_#{@quiz.id}")
-    started_at = ts ? Time.zone.at(ts.to_i) : Time.current
+    ts = session.delete("game_started_at_#{quiz_id}")
+    ts ? Time.zone.at(ts.to_i) : Time.current
 
-    @game = @quiz.games.create!(
+    permitted = params.permit(answers: {}, text_answers: {})
+    choice_params = permitted[:answers] || {}
+    text_params = permitted[:text_answers] || {}
+
+    @game = GameSubmission.new(
+      quiz: @quiz,
       user: (current_user if user_signed_in?),
-      started_at: started_at || Time.current
-    )
+      started_at: started_at,
+      choice_params: choice_params,
+      text_params: text_params
+    ).call
 
-    # store guesses
-    params[:answers].each_value do |option_ids|
-      Array(option_ids).each do |opt_id|
-        @game.guesses.create!(option_id: opt_id)
-      end
-    end
+    redirect_to game_path(@game), notice: "Quiz finished!"
 
-    # finish & score
-    @game.update!(
-      score: @game.calculate_score,
-      finished_at: Time.current
-    )
-
-    redirect_to game_path(@game), notice: "Pārbaude pabeigta."
+  rescue ActiveRecord::RecordInvalid => e
+    flash.now[:alert] = "Failed to save answers."
+    render :new, status: :unprocessable_entity
   end
 
   # show results
   def show
     @quiz = @game.quiz
-    @results = @quiz.questions.map do |q|
-      {
-        question:    q,
-        options:     q.options,
-        correct_ids: q.options.where(correct: true).ids,
-        chosen_ids:  @game.guesses.where(option_id: q.options.ids).pluck(:option_id)
-      }
-    end
+    @results = GameResults.new(@game).call
     @feedbacks = @quiz.feedbacks.where(user: current_user).order(created_at: :desc)
   end
 
@@ -76,7 +67,6 @@ class GamesController < ApplicationController
   end
 
   def set_game
-    # no eager load
-    @game = Game.find_by!(share_token: params[:id])
+    @game = Game.includes(:quiz, guesses: :option).find_by!(share_token: params[:id])
   end
 end

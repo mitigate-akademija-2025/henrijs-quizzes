@@ -7,11 +7,3 @@ class Question < ApplicationRecord
   validates :points, numericality: { only_integer: true, greater_than: 0 }
   validates :position, numericality: { only_integer: true, greater_than: 0 }
 end
-
-class MultipleChoiceQuestion < Question
-  validates :max_selections, numericality: { only_integer: true, greater_than: 0 }
-end
-
-class TextQuestion < Question
-  validates :max_selections, absence: true
-end
