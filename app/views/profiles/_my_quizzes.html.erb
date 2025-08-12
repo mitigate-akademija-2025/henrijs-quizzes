@@ -4,7 +4,7 @@
   <!-- Header -->
   <div class="mb-4 flex items-start justify-between">
     <div>
-      <h3 class="text-base font-semibold text-gray-900">My Quizzes</h3>
+      <h3 class="text-base font-semibold text-gray-900">User Quizzes</h3>
       <p class="text-xs text-gray-500">Your quizzes with quick actions and share tools.</p>
     </div>
   </div>
@@ -67,8 +67,8 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M11 2a1 1 0 0 1 2 0v2h2a1 1 0 1 1 0 2h-2v2a1 1 0 1 1-2 0V6H9a1 1 0 1 1 0-2h2V2Zm6.5 6a1 1 0 0 1 .92.61l.54 1.27 1.27.54a1 1 0 0 1 0 1.84l-1.27.54-.54 1.27a1 1 0 0 1-1.84 0l-.54-1.27-1.27-.54a1 1 0 0 1 0-1.84l1.27-.54.54-1.27A1 1 0 0 1 17.5 8ZM6 14a1 1 0 0 1 .92.61l.3.72.73.3a1 1 0 0 1 0 1.84l-.73.3-.3.72a1 1 0 0 1-1.84 0l-.3-.72-.72-.3a1 1 0 0 1 0-1.84l.72-.3.3-.72A1 1 0 0 1 6 14Z"/></svg>
       </div>
       <h4 class="text-sm font-semibold text-gray-900">No quizzes yet</h4>
-      <p class="mt-1 text-xs text-gray-600">Create your first quiz and share it with others.</p>
       <% if current_user == user %>
+      <p class="mt-1 text-xs text-gray-600">Create your first quiz and share it with others.</p>
         <%= link_to "Create a quiz", new_quiz_path,
               class: "mt-4 inline-block rounded-xl bg-indigo-600 px-3 py-1.5 text-white text-xs hover:bg-indigo-700 shadow-sm" %>
       <% end %>

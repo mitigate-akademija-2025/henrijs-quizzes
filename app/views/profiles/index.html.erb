@@ -1,17 +1,64 @@
-<div class="mx-auto max-w-4xl space-y-4">
-  <h1 class="text-xl font-semibold text-gray-900">Users</h1>
+<div class="mx-auto w-full max-w-5xl space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-semibold text-gray-900">User Management</h1>
+    <span class="hidden sm:inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-700">
+      <%= @users.respond_to?(:total_count) ? @users.total_count : @users.size %> total
+    </span>
+  </div>
+  <p class="text-xs text-gray-500">Manage user accounts and permissions.</p>
+  <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+    <ul class="divide-y divide-gray-200">
+      <% @users.each do |u| %>
+        <li class="group flex items-center justify-between gap-4 p-4 hover:bg-gray-50">
+          <div class="min-w-0 flex items-center gap-3">
+            <div class="grid h-9 w-9 place-items-center rounded-full bg-gray-100 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-200">
+              <%= (u.username.presence || u.email).to_s.first&.upcase %>
+            </div>
+            <div class="min-w-0">
+              <div class="truncate font-medium text-gray-900"><%= u.username.presence || u.email %></div>
+              <p class="truncate text-xs text-gray-500">
+                <%= u.email %> · Joined <%= l(u.created_at, format: :short) %>
+              </p>
+            </div>
+          </div>
 
-  <div class="divide-y divide-gray-200 rounded-2xl border border-gray-200 bg-white">
-    <% @users.each do |u| %>
-      <div class="flex items-center justify-between gap-4 p-4">
-        <div class="min-w-0">
-          <div class="truncate font-medium text-gray-900"><%= u.username.presence || u.email %></div>
-          <div class="text-xs text-gray-500">Joined <%= l(u.created_at, format: :short) %></div>
-        </div>
-        <%= link_to "Open profile", profile_path(u),
-              class: "inline-flex items-center rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700" %>
-      </div>
-    <% end %>
+          <div class="flex shrink-0 items-center gap-2">
+            <% disabled = (u == current_user) %>
+            <% make_admin = !u.admin? %>
+
+            <%= button_to(
+                  toggle_admin_profile_path(u, admin: make_admin),
+                  method: :patch,
+                  disabled: disabled,
+                  class: [
+                    "inline-grid place-items-center h-9 w-9 rounded-lg ring-1 ring-inset transition",
+                    (disabled ? "opacity-50 cursor-not-allowed" : "hover:shadow-sm"),
+                    (u.admin? ? "bg-yellow-50 text-yellow-600 ring-yellow-200 hover:bg-yellow-100"
+                              : "bg-white text-gray-500 ring-gray-200 hover:bg-gray-50")
+                  ].join(" ")
+                ) do %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M5 19h14a1 1 0 0 0 1-1v-7.59l-3.3 2.2a2 2 0 0 1-2.71-.47L12 8.67l-1.99 3.47a2 2 0 0 1-2.71.47L4 10.41V18a1 1 0 0 0 1 1Z"/>
+                <path d="M7 21h10"/>
+              </svg>
+              <span class="sr-only"><%= u.admin? ? "Remove admin" : "Make admin" %></span>
+            <% end %>
+
+
+            <%= link_to "Profile", profile_path(u),
+                  data: { turbo_frame: "_top" },
+                  class: "inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-800 hover:bg-gray-50" %>
+
+            <% if policy(u).destroy? %>
+              <%= button_to "Delete",
+                    profile_path(u),
+                    method: :delete,
+                    class: "inline-flex items-center rounded-lg border border-rose-300 bg-rose-50 px-3 py-1.5 text-xs text-rose-800 hover:bg-rose-100" %>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
   </div>
 
   <div class="mt-3">

@@ -11,6 +11,14 @@ class UserPolicy < ApplicationPolicy
     admin? || owner?
   end
 
+  def destroy?
+    admin? || owner?
+  end
+
+  def toggle_admin?
+    admin?
+  end
+
  class Scope < Scope
     def resolve
       if user&.admin?
