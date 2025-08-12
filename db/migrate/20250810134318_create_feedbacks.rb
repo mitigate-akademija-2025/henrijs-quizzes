@@ -6,7 +6,5 @@ class CreateFeedbacks < ActiveRecord::Migration[8.0]
       t.text :comment
       t.timestamps
     end
-
-    add_index :feedbacks, [ :quiz_id, :user_id ], unique: true
   end
 end

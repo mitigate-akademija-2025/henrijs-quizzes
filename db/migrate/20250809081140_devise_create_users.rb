@@ -8,6 +8,9 @@ class DeviseCreateUsers < ActiveRecord::Migration[8.0]
       t.string :encrypted_password, null: false
       t.string :username, null: false
 
+      ## Authorization
+      t.boolean :admin, default: false, null: false
+
       ## Recoverable
       t.string   :reset_password_token
       t.datetime :reset_password_sent_at
@@ -36,10 +39,11 @@ class DeviseCreateUsers < ActiveRecord::Migration[8.0]
       t.timestamps null: false
     end
 
-    add_index :users, :email,                unique: true
+    add_index :users, :email, unique: true
     add_index :users, :reset_password_token, unique: true
-    add_index :users, :username,             unique: true
-    add_index :users, :confirmation_token,   unique: true
-    add_index :users, :unlock_token,         unique: true
+    add_index :users, :username, unique: true
+    add_index :users, :confirmation_token, unique: true
+    add_index :users, :unlock_token, unique: true
+    add_index :users, :admin, unique: true
   end
 end
