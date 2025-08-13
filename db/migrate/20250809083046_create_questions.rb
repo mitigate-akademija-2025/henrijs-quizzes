@@ -5,7 +5,6 @@ class CreateQuestions < ActiveRecord::Migration[8.0]
       t.string :type, null: false, default: "ChoiceQuestion"
       t.integer :points, null: false, default: 1
       t.integer :max_selections
-      t.string  :image_path
       t.integer :position
       t.references :quiz, null: false, foreign_key: { on_delete: :cascade }
       t.timestamps

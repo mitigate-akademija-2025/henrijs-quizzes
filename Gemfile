@@ -77,3 +77,5 @@ gem "kaminari"
 gem "pundit"
 
 gem "heroicon", "~> 1.0"
+
+gem "image_processing", "~> 1.14"
