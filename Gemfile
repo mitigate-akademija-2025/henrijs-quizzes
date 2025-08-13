@@ -75,3 +75,5 @@ gem "devise", "~> 4.9"
 gem "kaminari"
 
 gem "pundit"
+
+gem "heroicon", "~> 1.0"

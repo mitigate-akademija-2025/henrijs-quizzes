@@ -39,10 +39,6 @@ class GameSubmission
       allowed = question.options.ids
       selected &= allowed
 
-      if question.max_selections.present?
-        selected = selected.first(question.max_selections)
-      end
-
       selected.each do |option_id|
         @game.guesses.create!(
           type: "ChoiceGuess",
@@ -58,7 +54,7 @@ class GameSubmission
       next unless question.is_a?(TextQuestion)
 
       submitted = @text_params[question.id.to_s].to_s
-      next if submitted.strip.empty?
+      next if submitted.blank?
 
       @game.guesses.create!(
         type: "TextGuess",

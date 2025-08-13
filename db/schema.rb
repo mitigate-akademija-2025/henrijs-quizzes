@@ -65,7 +65,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_134318) do
     t.text "content"
     t.string "type", default: "ChoiceQuestion", null: false
     t.integer "points", default: 1, null: false
-    t.integer "max_selections", default: 1, null: false
+    t.integer "max_selections"
     t.string "image_path"
     t.integer "position"
     t.integer "quiz_id", null: false

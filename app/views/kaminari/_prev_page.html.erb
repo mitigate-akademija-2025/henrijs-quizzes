@@ -1,12 +1,17 @@
 <li>
   <% if current_page.first? %>
-    <span class="inline-flex items-center rounded-lg border border-gray-100 bg-gray-50 px-3 py-1.5 text-sm text-gray-400 cursor-not-allowed">
-      &#8592;&nbsp;Prev
+    <span class="inline-flex items-center gap-1.5 rounded-lg border border-gray-100 bg-gray-50 px-3 py-1.5 text-sm text-gray-400 cursor-not-allowed">
+      <%= heroicon "chevron-double-right", variant: :outline, options: { class: "h-4 w-4" } %>
+      Previous
+      
     </span>
   <% else %>
-    <%= link_to raw("&#8592;&nbsp;Prev"), url,
-          class: "inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50",
-          data: { turbo_frame: "completed_quizzes" },
-          rel: "prev" %>
+    <%= link_to url,
+          rel: "previous",
+          class: "inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50" do %>
+      
+      <%= heroicon "chevron-left", variant: :outline, options: { class: "h-4 w-4" } %>
+      Previous
+    <% end %>
   <% end %>
 </li>

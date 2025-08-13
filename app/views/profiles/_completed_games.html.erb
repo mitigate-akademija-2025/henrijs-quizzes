@@ -3,10 +3,11 @@
 <% if games.any? %>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-3" data-controller="frame-links">
     <% games.each do |game| %>
-      <% total    = game.quiz.questions.size %>
-      <% score    = game.score || 0 %>
-      <% percent  = total.positive? ? ((score.to_f / total) * 100).round : nil %>
-      <% duration = (game.started_at && game.finished_at) ? distance_of_time_in_words(game.started_at, game.finished_at) : nil %>
+      <% score         = game.score.to_i %>
+      <% total_points  = game.quiz.questions.sum(:points) %>
+      <% total_points  = 1 if total_points.zero? %>
+      <% percent       = ((score.to_f / total_points) * 100).round %>
+      <% duration      = (game.started_at && game.finished_at) ? distance_of_time_in_words(game.started_at, game.finished_at) : nil %>
 
       <article class="rounded-xl bg-white ring-1 ring-gray-200 p-4 transition hover:ring-gray-300 hover:shadow-sm">
         <div class="flex items-start justify-between gap-3">
@@ -21,17 +22,17 @@
               <% if duration %> · duration <%= duration %><% end %>
             </p>
 
-            <% if percent %>
-              <div class="mt-3">
-                <div class="flex items-center justify-between text-[11px] text-gray-600">
-                  <span>Result</span>
-                  <span class="font-medium text-gray-700"><%= score %> / <%= total %></span>
-                </div>
-                <div class="mt-1 h-1.5 w-full rounded-full bg-gray-100">
-                  <div class="h-full rounded-full bg-emerald-500" style="width:<%= percent %>%"></div>
-                </div>
+            <div class="mt-3">
+              <div class="flex items-center justify-between text-[11px] text-gray-600">
+                <span>Result</span>
+                <span class="font-medium text-gray-700 tabular-nums">
+                  <%= score %> / <%= total_points %> 💎
+                </span>
               </div>
-            <% end %>
+              <div class="mt-1 h-1.5 w-full rounded-full bg-gray-100">
+                <div class="h-full rounded-full bg-emerald-500" style="width:<%= percent %>%"></div>
+              </div>
+            </div>
           </div>
         </div>
       </article>
@@ -44,7 +45,6 @@
 <% else %>
   <div class="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm" data-controller="frame-links">
     <div class="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-full bg-indigo-50 text-indigo-600">
-      <!-- sparkles -->
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M11 2a1 1 0 0 1 2 0v2h2a1 1 0 1 1 0 2h-2v2a1 1 0 1 1-2 0V6H9a1 1 0 1 1 0-2h2V2Zm6.5 6a1 1 0 0 1 .92.61l.54 1.27 1.27.54a1 1 0 0 1 0 1.84l-1.27.54-.54 1.27a1 1 0 0 1-1.84 0l-.54-1.27-1.27-.54a1 1 0 0 1 0-1.84l1.27-.54.54-1.27A1 1 0 0 1 17.5 8ZM6 14a1 1 0 0 1 .92.61l.3.72.73.3a1 1 0 0 1 0 1.84l-.73.3-.3.72a1 1 0 0 1-1.84 0l-.3-.72-.72-.3a1 1 0 0 1 0-1.84l.72-.3.3-.72A1 1 0 0 1 6 14Z"/></svg>
     </div>
     <h4 class="text-sm font-semibold text-gray-900">No completed games yet</h4>
@@ -53,8 +53,6 @@
       <%= link_to "Browse quizzes", quizzes_path,
             data: { turbo_frame: "_top" },
             class: "mt-4 inline-block rounded-xl bg-indigo-600 px-3 py-1.5 text-white text-xs hover:bg-indigo-700 shadow-sm" %>
-
     <% end %>
-
   </div>
 <% end %>

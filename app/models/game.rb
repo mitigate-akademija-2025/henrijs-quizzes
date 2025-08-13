@@ -15,7 +15,7 @@ class Game < ApplicationRecord
 
     questions.each do |question|
       case question
-      when MultipleChoiceQuestion
+      when ChoiceQuestion
         # Correct set
         correct_option_ids = question.options
                                      .select { |opt| opt.correct }
@@ -32,18 +32,15 @@ class Game < ApplicationRecord
         end
 
       when TextQuestion
-        # model layer ensures that only one text guess is possible
-        text_guess = guesses_by_qid.fetch(question.id, [])
+        # model layer ensures that at most one text guess is possible
+        text_guess = guesses_by_qid.fetch(question.id, []).find { |g| g.is_a?(TextGuess) }
 
         if text_guess
           submitted_text = normalize_answer(text_guess.answer_text)
-          # assume all options for text questions are acceptable
-          acceptable_texts = question.options
-                                     .map { |opt| normalize_answer(opt.content) }
+          # treat all options as acceptable answers
+          acceptable_texts = question.options.map { |opt| normalize_answer(opt.content) }
 
-          if acceptable_texts.include?(submitted_text)
-            total_score += question.points
-          end
+          total_score += question.points if acceptable_texts.include?(submitted_text)
         end
 
       else

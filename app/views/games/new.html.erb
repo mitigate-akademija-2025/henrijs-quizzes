@@ -1,18 +1,24 @@
 <%= form_with url: quiz_games_path(@quiz), method: :post, class: "space-y-5" do %>
-  <% if flash[:alert] %>
-    <div class="rounded-lg bg-red-50 border border-red-200 text-red-700 px-4 py-3">
-      <%= flash[:alert] %>
-    </div>
-  <% end %>
 
   <% @quiz.questions.each_with_index do |q, i| %>
     <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-      <h2 class="font-semibold text-gray-800 mb-4">
-        <span class="text-gray-500 mr-2"><%= i + 1 %>.</span>
-        <%= q.content %>
-      </h2>
+      
+      <div class="flex items-start gap-3">
+        <h2 class="font-semibold text-gray-800 mb-4 flex-1">
+          <span class="text-gray-500 mr-2"><%= i + 1 %>.</span>
+          <%= q.content %>
+        </h2>
 
-      <% if q.is_a?(MultipleChoiceQuestion) %>
+        <!-- Points chip -->
+        <span class="ml-3 mt-0.5 inline-flex items-center gap-1.5 rounded-full 
+                    bg-gradient-to-br from-amber-50 to-orange-50 text-amber-800 
+                    px-2.5 py-1 text-xs font-medium ring-1 ring-inset ring-amber-200">
+          <!-- tiny diamond -->
+          💎 <span class="tabular-nums"><%= q.points %></span>
+        </span>
+      </div>
+
+      <% if q.is_a?(ChoiceQuestion) %>
         <% single = (q.max_selections == 1) %>
 
         <!-- Options grid -->

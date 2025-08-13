@@ -82,7 +82,7 @@ class QuizzesController < ApplicationController
     params.fetch(:quiz, {}).permit(
       :title, :description,
       questions_attributes: [
-        :id, :type, :content, :points, :max_selections, :position, :image_path, :_destroy,
+        :id, :type, :content, :points, :image_path, :_destroy,
         { options_attributes: [ :id, :content, :correct, :_destroy ] }
       ]
     )

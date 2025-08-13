@@ -11,25 +11,23 @@ class GamesController < ApplicationController
 
   # submit game
   def create
-    ts = session.delete("game_started_at_#{quiz_id}")
-    ts ? Time.zone.at(ts.to_i) : Time.current
+    ts = session.delete("game_started_at_#{@quiz.id}")
+    started_at = ts ? Time.zone.at(ts.to_i) : Time.current
 
-    permitted = params.permit(answers: {}, text_answers: {})
-    choice_params = permitted[:answers] || {}
-    text_params = permitted[:text_answers] || {}
+    p = submission_params
 
     @game = GameSubmission.new(
       quiz: @quiz,
       user: (current_user if user_signed_in?),
       started_at: started_at,
-      choice_params: choice_params,
-      text_params: text_params
+      choice_params: p[:answers],
+      text_params: p[:text_answers]
     ).call
 
     redirect_to game_path(@game), notice: "Quiz finished!"
-
-  rescue ActiveRecord::RecordInvalid => e
+  rescue ActiveRecord::RecordInvalid
     flash.now[:alert] = "Failed to save answers."
+    @game = @quiz.games.build(started_at: started_at)
     render :new, status: :unprocessable_entity
   end
 
@@ -68,5 +66,13 @@ class GamesController < ApplicationController
 
   def set_game
     @game = Game.includes(:quiz, guesses: :option).find_by!(share_token: params[:id])
+  end
+
+  def submission_params
+    p = params.permit(answers: {}, text_answers: {})
+    {
+      answers:      (p[:answers] || {}).to_h,
+      text_answers: (p[:text_answers] || {}).to_h
+    }
   end
 end
