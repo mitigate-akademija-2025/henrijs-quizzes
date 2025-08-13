@@ -31,10 +31,12 @@
     <%= f.hidden_field :remove_image, value: "0", data: { image_picker_target: "removeField" } %>
 
     <%# Top preview (like gameplay) with a red X overlay %>
+    <%# app/views/questions/_fields.html.erb %>
+    <% blob = f.object.image&.blob %>
     <div data-image-picker-target="preview"
-        class="relative mb-3 overflow-hidden rounded-xl ring-1 ring-gray-200/70 <%= f.object.image&.attached? ? "" : "hidden" %>">
-      <% if f.object.image&.attached? %>
-        <%= image_tag f.object.image,
+        class="relative mb-3 overflow-hidden rounded-xl ring-1 ring-gray-200/70 <%= blob&.persisted? ? "" : "hidden" %>">
+      <% if blob&.persisted? %>
+        <%= image_tag blob,
               class: "block w-full max-h-64 object-cover",
               loading: "lazy",
               decoding: "async",
