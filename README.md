@@ -33,17 +33,20 @@ Look for http://localhost:3000.
 ### For production, add `.env` file
 
 ```
+# Mail Service
 SMTP_USERNAME=
 SMTP_PASSWORD=
 MAIL_FROM=
 
+# Cloudflare R2
 R2_ACCESS_KEY_ID=
 R2_SECRET_ACCESS_KEY=
-R2_BUCKET=
 R2_ENDPOINT=
+R2_BUCKET=
 
-DB_NAME=
-DB_PASSWORD=
-DB_URL=
-DB_USERNAME=
+# Postgres Database
+DATABASE_URL=
+
+# Rails secret
+RAILS_MASTER_KEY=
 ```

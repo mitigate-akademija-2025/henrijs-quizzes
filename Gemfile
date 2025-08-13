@@ -39,6 +39,9 @@ gem "thruster", require: false
 # gem "image_processing", "~> 1.2"
 
 group :development, :test do
+  # Use sqlite3 as the database for Active Record
+  gem "sqlite3", ">= 2.1"
+
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
@@ -50,7 +53,7 @@ group :development, :test do
 end
 
 group :development do
-  gem "sqlite3", ">= 2.1"
+  # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
   gem "letter_opener"
   gem "letter_opener_web"
@@ -63,7 +66,7 @@ group :test do
 end
 
 group :production do
-  gem "pg", "~> 1.5"
+  gem "pg"
 end
 
 gem "tailwindcss-rails"
@@ -83,3 +86,5 @@ gem "pundit"
 gem "heroicon", "~> 1.0"
 
 gem "image_processing", "~> 1.14"
+
+gem "aws-sdk-s3"
