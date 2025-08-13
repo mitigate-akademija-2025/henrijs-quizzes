@@ -33,7 +33,17 @@ Look for http://localhost:3000.
 ### For production, add `.env` file
 
 ```
-SMTP_USERNAME=your_smtp_username
-SMTP_PASSWORD=your_smtp_password
-MAIL_FROM=your@email.com
+SMTP_USERNAME=
+SMTP_PASSWORD=
+MAIL_FROM=
+
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_BUCKET=
+R2_ENDPOINT=
+
+DB_NAME=
+DB_PASSWORD=
+DB_URL=
+DB_USERNAME=
 ```
