@@ -33,6 +33,15 @@ Look for http://localhost:3000.
 ### For production, add `.env` file
 
 ```
+# Rails secret
+SECRET_KEY_BASE=
+
+# Postgres Database
+DATABASE_URL=
+
+# Redis Database
+REDIS_URL=
+
 # Mail Service
 SMTP_USERNAME=
 SMTP_PASSWORD=
@@ -43,10 +52,4 @@ R2_ACCESS_KEY_ID=
 R2_SECRET_ACCESS_KEY=
 R2_ENDPOINT=
 R2_BUCKET=
-
-# Postgres Database
-DATABASE_URL=
-
-# Rails secret
-RAILS_MASTER_KEY=
 ```
