@@ -88,3 +88,5 @@ gem "heroicon", "~> 1.0"
 gem "image_processing", "~> 1.14"
 
 gem "aws-sdk-s3"
+
+gem "redis", "~> 5.0"
