@@ -2,16 +2,18 @@
 <section class="bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-2xl p-6 mb-6 shadow">
   <h1 class="text-3xl font-semibold leading-tight"><%= @quiz.title %></h1>
 
+  <% total_points = @quiz.questions.sum(:points) %>
+  <% total_points = total_points.zero? ? 1 : total_points %>
+  <% pct = ((@game.score.to_f / total_points) * 100).round %>
+
   <div class="mt-4 flex items-center gap-4 text-violet-50">
     <p class="text-lg">
-      Rezultāts:
-      <%= @game.score %> / <%= @quiz.questions.count %>
+      Result:
+      <%= @game.score %> / <%= total_points %> points
     </p>
   </div>
 
   <!-- tiny progress bar -->
-  <% total = @quiz.questions.count.nonzero? || 1 %>
-  <% pct = ((@game.score.to_f / total) * 100).round %>
   <div class="mt-4 h-2 bg-white/20 rounded-full overflow-hidden">
     <div class="h-full bg-white/90" style="width: <%= pct %>%"></div>
   </div>
@@ -21,58 +23,116 @@
 <div class="space-y-5">
   <% @results.each_with_index do |g, i| %>
     <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-      <h2 class="font-semibold text-gray-800 mb-4">
-        <span class="text-gray-500 mr-2"><%= i + 1 %>.</span>
-        <%= g[:question].content %>
+      <h2 class="font-semibold text-gray-800 mb-4 flex items-center gap-3">
+        <span class="text-gray-500"><%= i + 1 %>.</span>
+        <span><%= g[:question].content %></span>
+        <span class="ml-auto text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-600 border border-gray-200">
+          <%= g[:points] %> 💎
+        </span>
       </h2>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <% g[:options].each do |opt| %>
-          <% chosen  = g[:chosen_ids].include?(opt.id) %>
-          <% correct = g[:correct_ids].include?(opt.id) %>
+      <% if g[:question].respond_to?(:image_path) && g[:question].image_path.present? %>
+        <div class="mb-4">
+          <img src="<%= g[:question].image_path %>" alt="" class="rounded-xl shadow-sm max-h-64 object-cover">
+        </div>
+      <% end %>
 
-          <% base = "rounded-xl px-4 py-3 shadow-sm border transition" %>
-          <% classes =
-                if chosen && correct
-                  "#{base} bg-green-600 text-white border-green-600"
-                elsif chosen && !correct
-                  "#{base} bg-red-600 text-white border-red-600"
-                elsif !chosen && correct
-                  "#{base} bg-gray-50 text-gray-800 border-green-300"
-                else
-                  "#{base} bg-gray-50 text-gray-800 border-gray-200"
-                end %>
+      <% if g[:type] == :mcq %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <% g[:options].each do |opt| %>
+            <% chosen  = g[:chosen_ids].include?(opt.id) %>
+            <% correct = g[:correct_ids].include?(opt.id) %>
 
-          <div class="<%= classes %>">
-            <div class="flex items-center justify-between gap-3">
-              <span><%= opt.content %></span>
+            <% base = "rounded-xl px-4 py-3 shadow-sm border transition" %>
+            <% classes =
+                  if chosen && correct
+                    "#{base} bg-green-600 text-white border-green-400"
+                  elsif chosen && !correct
+                    "#{base} bg-red-600 text-white border-red-400"
+                  elsif !chosen && correct
+                    "#{base} bg-gray-50 text-gray-800 border-green-300"
+                  else
+                    "#{base} bg-gray-50 text-gray-800 border-gray-200"
+                  end %>
 
-              <div class="flex items-center gap-2 text-xs">
-                <% if correct %>
-                  <span class="inline-block rounded px-2 py-0.5 <%= chosen ? 'text-white' : 'text-green-700' %>">
-                    pareizais
-                  </span>
-                <% end %>
-                <% if chosen && !correct %>
-                  <span class="inline-block rounded px-2 py-0.5 text-white">
-                    minējums
-                  </span>
-                <% end %>
+            <div class="<%= classes %>">
+              <div class="flex items-center justify-between gap-3">
+                <span><%= opt.content %></span>
+
+                <div class="flex items-center gap-2 text-xs">
+                  <% if correct %>
+                    <span class="inline-block rounded px-2 py-0.5 <%= chosen ? 'text-white' : 'text-green-700' %>">
+                      CORRECT
+                    </span>
+                  <% end %>
+                  <% if chosen && !correct %>
+                    <span class="inline-block rounded px-2 py-0.5 text-white">
+                      GUESSED
+                    </span>
+                  <% end %>
+                </div>
               </div>
             </div>
+          <% end %>
+        </div>
+
+      <% else %>
+        <% submitted = g[:submitted_text].to_s %>
+        <% correct   = g[:correct] %>
+
+        <% base = "relative overflow-hidden rounded-xl px-4 py-3 shadow-sm border transition bg-white" %>
+        <% card =
+            if correct
+              "#{base} border-green-300"
+            else
+              "#{base} border-rose-300"
+            end %>
+
+
+        <div class="mt-3 text-sm text-gray-600 pb-4">Your answer</div>
+
+        <div class="<%= card %>">
+          <div
+            class="pointer-events-none absolute inset-y-0 right-0 w-[100%] opacity-40"
+            style="
+              background:
+                linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 5%, <%= correct ? 'rgba(16,185,129,.06)' : 'rgba(244,63,94,.06)' %> 5% 100%),
+                repeating-linear-gradient(135deg, <%= correct ? 'rgba(16,185,129,.22)' : 'rgba(244,63,94,.22)' %> 0 12px, transparent 12px 24px);
+            ">
+          </div>
+
+          <div class="relative flex items-center justify-between gap-3">
+            <div>
+              <div class="text-base font-medium"><%= submitted.presence || "—" %></div>
+            </div>
+            <div class="text-xs">
+              <span class="inline-block rounded px-2 py-0.5">
+                <%= correct ? "CORRECT" : "INCORRECT" %>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <% if g[:acceptable_answers].present? %>
+          <div class="mt-3 text-sm text-gray-600">
+            Acceptable answers:
+            <span class="font-medium">
+              <%= g[:acceptable_answers].join(", ") %>
+            </span>
           </div>
         <% end %>
-      </div>
+      <% end %>
+
     </section>
   <% end %>
 </div>
 
 <% if @game.user == current_user %>
   <section class="mt-8">
-    <h2 class="text-lg font-semibold text-gray-900">Tavas atsauksmes</h2>
+    <h2 class="text-lg font-semibold text-gray-900">Your feedback</h2>
 
     <ul id="feedbacks" class="mt-3 space-y-3">
-      <%= render @feedbacks %> <%# uses app/views/feedbacks/_feedback.html.erb %>
+      <%= render @feedbacks %>
     </ul>
 
     <div class="mt-4">
@@ -83,7 +143,6 @@
   </section>
 <% end %>
 
-<!-- Footer actions -->
 <footer class="mt-8 pt-4">
   <div class="flex">
     <%= link_to "Quiz Statistics", quiz_path(@quiz),
@@ -91,4 +150,3 @@
                   text-gray-800 hover:bg-gray-50 shadow-sm transition" %>
   </div>
 </footer>
-

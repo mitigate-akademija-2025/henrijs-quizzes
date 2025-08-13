@@ -1,10 +1,6 @@
-# app/models/guess.rb
 class Guess < ApplicationRecord
+  self.inheritance_column = :type
   belongs_to :game
-  belongs_to :option
-  has_one :question, through: :option
-
-  validates :game_id, :option_id, presence: true
-
-  validates :option_id, uniqueness: { scope: :game_id }
+  belongs_to :question
+  belongs_to :option, optional: true
 end

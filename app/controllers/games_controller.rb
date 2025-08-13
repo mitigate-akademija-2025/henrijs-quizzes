@@ -14,38 +14,27 @@ class GamesController < ApplicationController
     ts = session.delete("game_started_at_#{@quiz.id}")
     started_at = ts ? Time.zone.at(ts.to_i) : Time.current
 
-    @game = @quiz.games.create!(
+    p = submission_params
+
+    @game = GameSubmission.new(
+      quiz: @quiz,
       user: (current_user if user_signed_in?),
-      started_at: started_at || Time.current
-    )
+      started_at: started_at,
+      choice_params: p[:answers],
+      text_params: p[:text_answers]
+    ).call
 
-    # store guesses
-    params[:answers].each_value do |option_ids|
-      Array(option_ids).each do |opt_id|
-        @game.guesses.create!(option_id: opt_id)
-      end
-    end
-
-    # finish & score
-    @game.update!(
-      score: @game.calculate_score,
-      finished_at: Time.current
-    )
-
-    redirect_to game_path(@game), notice: "Pārbaude pabeigta."
+    redirect_to game_path(@game), notice: "Quiz finished!"
+  rescue ActiveRecord::RecordInvalid
+    flash.now[:alert] = "Failed to save answers."
+    @game = @quiz.games.build(started_at: started_at)
+    render :new, status: :unprocessable_entity
   end
 
   # show results
   def show
     @quiz = @game.quiz
-    @results = @quiz.questions.map do |q|
-      {
-        question:    q,
-        options:     q.options,
-        correct_ids: q.options.where(correct: true).ids,
-        chosen_ids:  @game.guesses.where(option_id: q.options.ids).pluck(:option_id)
-      }
-    end
+    @results = GameResults.new(@game).call
     @feedbacks = @quiz.feedbacks.where(user: current_user).order(created_at: :desc)
   end
 
@@ -76,7 +65,14 @@ class GamesController < ApplicationController
   end
 
   def set_game
-    # no eager load
-    @game = Game.find_by!(share_token: params[:id])
+    @game = Game.includes(:quiz, guesses: :option).find_by!(share_token: params[:id])
+  end
+
+  def submission_params
+    p = params.permit(answers: {}, text_answers: {})
+    {
+      answers:      (p[:answers] || {}).to_h,
+      text_answers: (p[:text_answers] || {}).to_h
+    }
   end
 end

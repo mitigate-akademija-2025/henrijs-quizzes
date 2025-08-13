@@ -1,55 +1,65 @@
-<!-- Header card -->
-<section class="bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-2xl p-6 mb-6 shadow">
-  <h1 class="text-3xl font-semibold leading-tight"><%= @quiz.title %></h1>
-
-  <% if @quiz.description.present? %>
-    <p class="mt-3 text-violet-100"><%= @quiz.description %></p>
-  <% end %>
-
-  <div class="mt-4 flex items-center gap-2 text-sm text-violet-100">
-    <!-- user icon -->
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-90" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8V22h19.2v-2.8c0-3.2-6.4-4.8-9.6-4.8z"/>
-    </svg>
-    <span class="tracking-wide">
-      <%= (@quiz.user&.username.presence || "Anonīms").upcase %>
-    </span>
-  </div>
-</section>
-
 <%= form_with url: quiz_games_path(@quiz), method: :post, class: "space-y-5" do %>
-  <% if flash[:alert] %>
-    <div class="rounded-lg bg-red-50 border border-red-200 text-red-700 px-4 py-3">
-      <%= flash[:alert] %>
-    </div>
-  <% end %>
 
   <% @quiz.questions.each_with_index do |q, i| %>
     <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-      <h2 class="font-semibold text-gray-800 mb-4">
-        <span class="text-gray-500 mr-2"><%= i + 1 %>.</span>
-        <%= q.content %>
-      </h2>
+      
+      <div class="flex items-start gap-3">
+        <h2 class="font-semibold text-gray-800 mb-4 flex-1">
+          <span class="text-gray-500 mr-2"><%= i + 1 %>.</span>
+          <%= q.content %>
+        </h2>
 
-      <!-- Options grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <% q.options.each do |opt| %>
-          <label class="group relative">
-            <!-- checkbox first so peer styles work -->
-            <input type="checkbox"
-                   name="answers[<%= q.id %>][]"
-                   value="<%= opt.id %>"
-                   class="peer sr-only">
-
-            <div class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-800
-                        group-hover:bg-gray-100 transition
-                        peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600
-                        shadow-sm">
-              <%= opt.content %>
-            </div>
-          </label>
-        <% end %>
+        <!-- Points chip -->
+        <span class="ml-3 mt-0.5 inline-flex items-center gap-1.5 rounded-full 
+                    bg-gradient-to-br from-amber-50 to-orange-50 text-amber-800 
+                    px-2.5 py-1 text-xs font-medium ring-1 ring-inset ring-amber-200">
+          <!-- tiny diamond -->
+          💎 <span class="tabular-nums"><%= q.points %></span>
+        </span>
       </div>
+
+      <% if q.is_a?(ChoiceQuestion) %>
+        <% single = (q.max_selections == 1) %>
+
+        <!-- Options grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <% q.options.each do |opt| %>
+            <label class="group relative cursor-pointer">
+              <% if single %>
+                <!-- radio (single-select) -->
+                <input type="radio"
+                       name="answers[<%= q.id %>]"
+                       value="<%= opt.id %>"
+                       class="peer sr-only">
+              <% else %>
+                <!-- checkbox (multi-select) -->
+                <input type="checkbox"
+                       name="answers[<%= q.id %>][]"
+                       value="<%= opt.id %>"
+                       class="peer sr-only">
+              <% end %>
+
+              <div class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-800
+                          group-hover:bg-gray-100 transition
+                          peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600
+                          shadow-sm">
+                <%= opt.content %>
+              </div>
+            </label>
+          <% end %>
+        </div>
+
+      <% elsif q.is_a?(TextQuestion) %>
+        <!-- Text input -->
+        <div class="mt-2">
+          <label class="block text-sm text-gray-600 mb-1">Your answer</label>
+          <input type="text"
+                 name="text_answers[<%= q.id %>]"
+                 class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                 autocomplete="off"
+                 placeholder="Type your answer…">
+        </div>
+      <% end %>
     </section>
   <% end %>
 

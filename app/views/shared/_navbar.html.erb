@@ -8,10 +8,7 @@
           <% if user_signed_in? %>
             <%= link_to my_profile_path,
                       class: "flex items-center gap-1 hover:text-blue-300 text-white px-3 py-1.5 rounded cursor-pointer transition" do %>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white/90" viewBox="0 0 24 24" fill="none">
-                <path d="M15.75 7.5a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" stroke="currentColor" stroke-width="1.5"/>
-                <path d="M4.5 20.25a7.5 7.5 0 0 1 15 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
+              <%= heroicon "user-circle", variant: :outline, options: { class: "h-6 w-6" } %>
               <span><%= current_user.username.presence || "User" %></span>
             <% end %>
           <% else %>

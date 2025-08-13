@@ -3,8 +3,7 @@ class CreateQuizzes < ActiveRecord::Migration[8.0]
     create_table :quizzes do |t|
       t.string :title
       t.text :description
-      t.references :user, null: false, foreign_key: true
-
+      t.references :user, null: false, foreign_key: { on_delete: :cascade }
       t.timestamps
     end
   end

@@ -1,13 +1,13 @@
 <%= turbo_frame_tag dom_id(quiz, :feedback) do %>
   <%= form_with model: [quiz, feedback], data: { turbo: true }, class: "flex gap-3" do |f| %>
-    <!-- Avatar (initial) -->
-    <div class="h-10 w-10 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center text-sm font-semibold">
+    <!-- Avatar -->
+    <div class="h-9 w-9 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 grid place-items-center text-xs font-semibold ring-1 ring-gray-300/60">
       <%= (current_user&.username || "A")[0,1].to_s.upcase %>
     </div>
 
     <div class="flex-1">
       <% if feedback.errors.any? %>
-        <div class="mb-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+        <div class="mb-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
           <p class="font-semibold"><%= pluralize(feedback.errors.count, "error") %> prevented saving</p>
           <ul class="list-disc list-inside">
             <% feedback.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
@@ -15,24 +15,25 @@
         </div>
       <% end %>
 
-      <!-- Comment bubble -->
-      <div class="rounded-2xl border border-gray-300 bg-white/90 px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500/60">
+      <!-- Input card -->
+      <div class="rounded-2xl ring-1 ring-gray-200 bg-white/80 px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500/60">
         <%= f.text_area :comment,
-              placeholder: "Write your feedback…",
+              placeholder: "Share your thoughts…",
               rows: 3,
-              class: "w-full bg-transparent outline-none resize-y" %>
-      </div>
+              class: "w-full bg-transparent resize-y outline-none placeholder:text-gray-400" %>
 
-      <!-- Actions -->
-      <div class="mt-2 flex justify-end">
-        <button type="submit"
-                class="p-2 rounded-md border hover:bg-gray-100"
-                title="<%= feedback.persisted? ? 'Update feedback' : 'Send feedback' %>">
-          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M2 21l20-9L2 3v7l14 2-14 2v7z"/>
-          </svg>
-          <span class="sr-only"><%= feedback.persisted? ? "Update feedback" : "Send feedback" %></span>
-        </button>
+        <div class="mt-2 flex items-center justify-between">
+          <p class="text-[11px] text-gray-500">Be kind and constructive.</p>
+
+          <%= f.button type: :submit,
+                data: { disable_with: "Sending…" },
+                class: "inline-flex items-center gap-2 rounded-lg bg-blue-600 px-3.5 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-blue-600/20 transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" do %>
+          
+            <%= heroicon "paper-airplane", variant: :solid, options: { class: "h-4 w-4 -rotate-45" } %>
+            
+            <span><%= feedback.persisted? ? "Update" : "Send" %></span>
+          <% end %>
+        </div>
       </div>
     </div>
   <% end %>

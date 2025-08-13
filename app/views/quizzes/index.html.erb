@@ -15,15 +15,6 @@
   </div>
   <div class="mt-6">
     <%= form_with url: quizzes_path, method: :get, local: true, class: "relative w-full md:max-w-xl" do |form| %>
-      <label for="search" class="sr-only">Search quizzes</label>
-
-      <!-- search icon -->
-      <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/70"
-          xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"/>
-      </svg>
-
       <%= form.text_field(
             :search,
             value: params[:search],
@@ -35,12 +26,7 @@
       <% if params[:search].present? %>
         <%= link_to quizzes_path,
               class: "absolute right-24 top-1/2 -translate-y-1/2 text-white/80 hover:text-white focus:outline-none" do %>
-          <span class="sr-only">Clear search</span>
-          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M6 18 18 6M6 6l12 12"/>
-          </svg>
+          <%= heroicon "x-mark", variant: :outline, options: { class: "h-6 w-6" } %>
         <% end %>
       <% end %>
 
