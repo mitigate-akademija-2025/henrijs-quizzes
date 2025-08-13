@@ -39,7 +39,6 @@ class QuizzesController < ApplicationController
     q = @quiz.questions.build(
       type: "ChoiceQuestion",
       points: 1,
-      max_selections: 1
     )
     2.times { q.options.build }
   end
@@ -82,7 +81,7 @@ class QuizzesController < ApplicationController
     params.fetch(:quiz, {}).permit(
       :title, :description,
       questions_attributes: [
-        :id, :type, :content, :points, :image_path, :_destroy,
+        :id, :type, :content, :points, :_destroy, :remove_image, :image,
         { options_attributes: [ :id, :content, :correct, :_destroy ] }
       ]
     )

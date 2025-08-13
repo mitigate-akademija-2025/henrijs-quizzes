@@ -25,4 +25,8 @@ Rails.application.routes.draw do
     member { patch :toggle_admin }
   end
   get "/profile", to: "profiles#me", as: :my_profile
+
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
 end

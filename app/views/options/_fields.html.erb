@@ -11,7 +11,7 @@
     <!-- every option is implicitly correct -->
     <%= of.hidden_field :correct, value: "1" %>
   <% else %>
-    <label class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600/10 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 has-[:checked]:bg-emerald-600 has-[:checked]:text-white has-[:checked]:ring-emerald-600/30"
+    <label class="cursor-pointer inline-flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600/10 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 has-[:checked]:bg-emerald-600 has-[:checked]:text-white has-[:checked]:ring-emerald-600/30"
            title="Mark as correct">
       <%= of.check_box :correct, class: "sr-only" %>
       <%= heroicon "check", variant: :outline, options: { class: "h-4.5 w-4.5" } %>

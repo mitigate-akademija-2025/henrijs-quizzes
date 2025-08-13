@@ -1,0 +1,16 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      RAILS_ENV: development
+    ports: ["3000:3000"]
+    volumes:
+      - .:/rails
+      - quizzes_db:/rails/db
+      - quizzes_storage:/rails/storage
+    command: bash -lc "bin/rails db:prepare && bin/rails s -b 0.0.0.0 -p 3000"
+volumes:
+  quizzes_db:
+  quizzes_storage:

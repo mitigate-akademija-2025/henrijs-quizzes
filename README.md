@@ -1,28 +1,16 @@
 # Henrijs Quizzes
 
-### Add `.env` file
-
-```
-SMTP_USERNAME=your_smtp_username
-SMTP_PASSWORD=your_smtp_password
-MAIL_FROM=your@email.com
-```
-
 ## (A) Run with Docker
 
 ```bash
-docker build -t henrijs_quizzes . && \
-docker run --rm -it -p 3000:3000 -e RAILS_ENV=development \
-  --env-file .env \
-  henrijs_quizzes \
-  sh -lc "bin/rails db:prepare && bin/rails server -b 0.0.0.0 -p 3000"
+docker-compose up --build
 ```
 
 ## (B) Run Locally
 
-### 1. Install dependencies
+Make sure you have the correct Ruby version.
 
-Make sure you have the correct Ruby version:
+### 1. Install dependencies
 
 ```bash
 bundle install
@@ -40,4 +28,25 @@ bin/rails db:prepare
 bundle exec bin/dev
 ```
 
-Your app will be available at http://localhost:3000.
+Look for http://localhost:3000.
+
+### For production, add `.env` file
+
+```
+# Mail Service
+SMTP_USERNAME=
+SMTP_PASSWORD=
+MAIL_FROM=
+
+# Cloudflare R2
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_ENDPOINT=
+R2_BUCKET=
+
+# Postgres Database
+DATABASE_URL=
+
+# Rails secret
+RAILS_MASTER_KEY=
+```

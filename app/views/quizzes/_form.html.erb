@@ -93,20 +93,20 @@
 
           <button type="button"
                   data-action="nested#addChoiceQuestion"
-                  class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors">
+                  class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors">
             <%= heroicon "question-mark-circle", variant: :outline, options: { class: "h-4.5 w-4.5" } %>
             Add MCQ
           </button>
 
           <button type="button"
                   data-action="nested#addTextQuestion"
-                  class="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-violet-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 transition-colors">
+                  class="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-violet-700 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-violet-600 transition-colors">
             <%= heroicon "chat-bubble-bottom-center-text", variant: :outline, options: { class: "h-4.5 w-4.5" } %>
             Add Text
           </button>
 
           <%= f.submit (f.object.persisted? ? "Save changes" : "Create quiz"),
-                class: "inline-flex items-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 transition-colors" %>
+                class: "cursor-pointer inline-flex items-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 transition-colors" %>
         </div>
 
       </div>
