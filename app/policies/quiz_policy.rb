@@ -4,6 +4,10 @@ class QuizPolicy < ApplicationPolicy
   def destroy? = admin? || owner?
   def show?    = true
 
+  def generate_with_gemini?
+    create?
+  end
+
   class Scope < Scope
     def resolve
       scope.all

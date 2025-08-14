@@ -1,3 +1,4 @@
+<div class="max-w-3xl mx-auto px-4">
 <%= form_with url: quiz_games_path(@quiz), method: :post, class: "space-y-5" do %>
   <% @quiz.questions.each_with_index do |q, i| %>
     <% single = q.is_a?(ChoiceQuestion) && (q.max_selections.to_i == 1) %>
@@ -95,3 +96,4 @@
     </button>
   </div>
 <% end %>
+</div>

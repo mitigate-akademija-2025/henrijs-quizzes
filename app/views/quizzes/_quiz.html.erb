@@ -1,31 +1,40 @@
-<li class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition">
-  <div class="flex items-start justify-between gap-4">
-    <div class="min-w-0">
-      <%= link_to quiz.title, quiz_path(quiz),
-            class: "block text-lg font-semibold text-gray-900 hover:underline truncate" %>
+<li class="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg">
+  <!-- Decorative corner accent -->
+  <div aria-hidden="true" class="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-violet-100 opacity-40 blur-2xl transition group-hover:opacity-60"></div>
 
-      <% if quiz.description.present? %>
-        <p class="text-gray-600 mt-1 line-clamp-2"><%= truncate(quiz.description, length: 140) %></p>
+  <div class="relative flex h-full flex-col justify-between">
+    <!-- Top: title + description -->
+    <div class="flex-1">
+      <%= link_to quiz_path(quiz), class: "block" do %>
+        <h3 class="text-lg font-semibold text-gray-900 transition-colors group-hover:text-violet-700">
+          <%= quiz.title %>
+        </h3>
+        <% if quiz.description.present? %>
+          <p class="mt-1 text-sm text-gray-600 line-clamp-2">
+            <%= truncate(quiz.description, length: 140) %>
+          </p>
+        <% end %>
       <% end %>
+    </div>
 
-      <div class="mt-3 flex items-center gap-3 text-sm text-gray-500">
+    <!-- Footer: meta + play -->
+    <div class="mt-4 flex items-center justify-between">
+      <!-- Meta pill -->
+      <div class="flex items-center gap-3 rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600">
         <div class="inline-flex items-center gap-1">
           <%= heroicon "user", variant: :outline, options: { class: "h-4 w-4" } %>
           <span><%= quiz.user&.username || "Anonīms" %></span>
         </div>
-
-        <span aria-hidden="true">•</span>
-        <span><%= time_ago_in_words(quiz.created_at) %> ago</span>
-
         <span aria-hidden="true">•</span>
         <span><%= pluralize(quiz.questions.size, "question") %></span>
       </div>
-    </div>
 
-    <%= link_to new_quiz_game_path(quiz),
-          class: "shrink-0 inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg shadow-sm transition" do %>
-      <%= heroicon "play", variant: :outline, options: { class: "h-4 w-4" } %>
-      Play
-    <% end %>
+      <!-- Play button -->
+      <%= link_to new_quiz_game_path(quiz),
+            class: "inline-flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-700 hover:shadow-md" do %>
+        <%= heroicon "play", variant: :outline, options: { class: "h-4 w-4" } %>
+        Play
+      <% end %>
+    </div>
   </div>
 </li>
