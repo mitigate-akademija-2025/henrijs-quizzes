@@ -6,50 +6,55 @@
   warning: { acc: "from-amber-500 to-amber-400", icon: "text-amber-600"  }
 } %>
 
-<% types.each_key do |type| %>
-  <% msg = flash[type] %>
-  <% next if msg.blank? %>
+<div class="fixed inset-x-2 top-3 z-50 flex flex-col gap-2 sm:items-center sm:inset-x-auto sm:w-full sm:max-w-sm">
+  <% types.each_key do |type| %>
+    <% msg = flash[type] %>
+    <% next if msg.blank? %>
 
-  <div
-    data-controller="flash"
-    data-flash-timeout-value="4500"
-    data-action="mouseenter->flash#pause mouseleave->flash#resume"
-    class="relative pointer-events-auto group transition duration-200
-           rounded-xl border border-neutral-200/70 dark:border-neutral-700/70
-           bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/60
-           shadow-xl ring-1 ring-black/5 flex items-start gap-3 p-3">
+    <div
+      data-controller="flash"
+      data-flash-timeout-value="4500"
+      data-action="mouseenter->flash#pause mouseleave->flash#resume"
+      class="relative pointer-events-auto group w-full max-w-full sm:max-w-sm transition duration-200
+             rounded-xl border border-neutral-200/70 dark:border-neutral-700/70
+             bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/60
+             shadow-xl ring-1 ring-black/5 flex items-start gap-3 p-3 sm:p-4">
 
-    <div class="w-1.5 h-full rounded-l-xl bg-gradient-to-b <%= types[type][:acc] %>"></div>
+      <div class="w-1.5 h-full rounded-l-xl bg-gradient-to-b <%= types[type][:acc] %>"></div>
 
-    <div class="mt-0.5 <%= types[type][:icon] %>">
-      <% case type
-         when :success %>
-           <svg viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16ZM8.7 11.7l4.3-4.3 1.4 1.4-5.7 5.7L5.6 11l1.4-1.4 1.7 2.1z" clip-rule="evenodd"/></svg>
-      <% when :warning %>
-           <svg viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M8.257 3.099c.765-1.36 2.72-1.36 3.485 0l6.518 11.59c.75 1.334-.213 3.01-1.742 3.01H3.48c-1.53 0-2.492-1.676-1.742-3.01L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-2a1 1 0 01-1-1V8a1 1 0 112 0v3a1 1 0 01-1 1z"/></svg>
-      <% when :alert, :error %>
-           <svg viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.6 6.6l1.4-1.4L14.8 10l-4.8 4.8-1.4-1.4L12 10 8.6 6.6z" clip-rule="evenodd"/></svg>
-      <% else %>
-           <svg viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 112 0v5a1 1 0 11-2 0V9zm1-4a1.25 1.25 0 100 2.5A1.25 1.25 0 0010 5z" clip-rule="evenodd"/></svg>
-      <% end %>
+      <!-- Icon -->
+      <div class="mt-0.5 shrink-0 <%= types[type][:icon] %>">
+        <% case type
+           when :success %>
+             <svg viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16ZM8.7 11.7l4.3-4.3 1.4 1.4-5.7 5.7L5.6 11l1.4-1.4 1.7 2.1z" clip-rule="evenodd"/></svg>
+        <% when :warning %>
+             <svg viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M8.257 3.099c.765-1.36 2.72-1.36 3.485 0l6.518 11.59c.75 1.334-.213 3.01-1.742 3.01H3.48c-1.53 0-2.492-1.676-1.742-3.01L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-2a1 1 0 01-1-1V8a1 1 0 112 0v3a1 1 0 01-1 1z"/></svg>
+        <% when :alert, :error %>
+             <svg viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.6 6.6l1.4-1.4L14.8 10l-4.8 4.8-1.4-1.4L12 10 8.6 6.6z" clip-rule="evenodd"/></svg>
+        <% else %>
+             <svg viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 112 0v5a1 1 0 11-2 0V9zm1-4a1.25 1.25 0 100 2.5A1.25 1.25 0 0010 5z" clip-rule="evenodd"/></svg>
+        <% end %>
+      </div>
+
+      <!-- Message -->
+      <div class="flex-1 min-w-0 text-sm leading-6 text-neutral-900 dark:text-neutral-100 break-words">
+        <%= msg %>
+      </div>
+
+      <!-- Dismiss -->
+      <button
+        type="button"
+        aria-label="Dismiss"
+        data-action="click->flash#dismiss"
+        class="shrink-0 rounded-md p-1 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-900/5
+               dark:text-neutral-400 dark:hover:text-neutral-100 dark:hover:bg-white/5">
+        ✕
+      </button>
+
+      <!-- Progress bar -->
+      <div class="absolute left-2 right-2 bottom-1 h-0.5 bg-neutral-900/10 dark:bg-white/10 rounded overflow-hidden">
+        <div data-flash-target="progress" class="h-full w-full opacity-70 bg-gradient-to-r <%= types[type][:acc] %>"></div>
+      </div>
     </div>
-
-    <div class="flex-1 text-sm leading-6 text-neutral-900 dark:text-neutral-100">
-      <%= msg %>
-    </div>
-
-    <button
-      type="button"
-      aria-label="Dismiss"
-      data-action="click->flash#dismiss"
-      class="rounded-md p-1 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-900/5
-             dark:text-neutral-400 dark:hover:text-neutral-100 dark:hover:bg-white/5">
-      ✕
-    </button>
-
-    <div class="absolute left-2 right-2 bottom-1 h-0.5 bg-neutral-900/10 dark:bg-white/10 rounded overflow-hidden">
-      <div data-flash-target="progress" class="h-full w-full opacity-70
-                  bg-gradient-to-r <%= types[type][:acc] %>"></div>
-    </div>
-  </div>
-<% end %>
+  <% end %>
+</div>

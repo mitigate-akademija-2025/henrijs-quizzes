@@ -1,46 +1,47 @@
-<div class="mx-auto space-y-6">
+<div class="mx-auto space-y-6 px-3 sm:px-0">
   <!-- Quiz header -->
   <header class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900"><%= @quiz.title %></h1>
+      <div class="min-w-0">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 break-words"><%= @quiz.title %></h1>
         <p class="text-sm text-gray-500 mt-1">
           Created by <span class="font-medium"><%= @quiz.user.username %></span>
         </p>
       </div>
 
-      <div class="flex gap-3">
-
+      <div class="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
         <% if policy(@quiz).update? %>
           <%= button_to "Delete Quiz",
             @quiz,
             method: :delete,
-            class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg" %>
+            class: "w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg" %>
+
           <%= link_to "Edit Quiz", edit_quiz_path(@quiz),
-                class: "bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-sm" %>
+                class: "w-full sm:w-auto bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-sm text-center" %>
         <% end %>
 
         <%= link_to new_quiz_game_path(@quiz),
-          class: "shrink-0 inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg shadow-sm transition" do %>
+          class: "w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg shadow-sm transition" do %>
           Play Quiz
         <% end %>
 
         <%= link_to "Invite to Play",
           new_quiz_invitation_path(@quiz),
           data: { turbo_frame: "modal" },
-          class: "shrink-0 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg shadow-sm transition" %>
-
+          class: "w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg shadow-sm transition" %>
       </div>
     </div>
 
-    <p class="mt-3 text-gray-700"><%= @quiz.description %></p>
+    <% if @quiz.description.present? %>
+      <p class="mt-3 text-gray-700 break-words"><%= @quiz.description %></p>
+    <% end %>
 
     <% if @games_count.to_i > 0 %>
       <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <!-- Total Attempts -->
         <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-center gap-3">
           <div class="flex-shrink-0 bg-blue-100 text-blue-600 p-2 rounded-full">
-            <%= heroicon "globe-alt", variant: :outline, options: { class: "h-4.5 w-4.5" } %>
+            <%= heroicon "globe-alt", variant: :outline, options: { class: "h-5 w-5" } %>
           </div>
           <div>
             <p class="text-sm text-gray-500">Total Attempts</p>
@@ -63,97 +64,76 @@
         </div>
       </div>
     <% end %>
-
   </header>
 
   <!-- Top results -->
-<% if @games_count.to_i > 0 %>
-  <section>
-    <div class="mb-3">
-      <h2 class="text-xl font-semibold text-gray-800">Best Results</h2>
+  <% if @games_count.to_i > 0 %>
+    <section>
+      <div class="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Best Results</h2>
 
-      <div class="mt-2">
         <%= link_to export_quiz_games_path(@quiz, format: :csv),
           data: { turbo: false },
-          class: "inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-1.5
-                  text-gray-800 hover:bg-gray-50 shadow-sm transition" do %>
-          <%= heroicon "arrow-down-tray", variant: :outline, options: { class: "h-4.5 w-4.5" } %>
-          <span class="font-medium">Export Result CSV</span>
+          class: "inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-gray-800 hover:bg-gray-50 shadow-sm transition text-sm sm:text-base" do %>
+          <%= heroicon "arrow-down-tray", variant: :outline, options: { class: "h-5 w-5" } %>
+          <span class="font-medium">Export CSV</span>
         <% end %>
       </div>
-    </div>
 
-    <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-      <table class="min-w-full text-sm">
-        <thead class="bg-gray-50 text-gray-700">
-          <tr>
-            <th class="px-4 py-2 text-left">Name</th>
-            <th class="px-4 py-2 text-left w-56">Percentage</th>
-            <th class="px-4 py-2 text-left">Score</th>
-            <th class="px-4 py-2 text-left">Duration</th>
-            <th class="px-4 py-2 text-left">Completed</th>
-            <th class="px-4 py-2 text-left">Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          <% @top_games.each do |g| %>
-            <% percentage = @total_points.positive? ? ((g.score.to_f / @total_points) * 100).round : 0 %>
-
-            <tr class="border-t hover:bg-gray-50 transition">
-              <td class="px-4 py-3">
-                <div class="flex items-center gap-2">
-                  <%= heroicon "user", variant: :outline, options: { class: "h-4.5 w-4.5" } %>
-                  <span class="font-medium text-gray-900"><%= g.user&.username.presence || "Guest" %></span>
-                </div>
-              </td>
-
-              <td class="px-4 py-3">
-                <div class="flex items-center gap-2">
-                  <div class="h-2 w-40 bg-gray-200 rounded-full overflow-hidden">
-                    <div class="h-full
-                                <%= percentage >= 80 ? 'bg-green-500' : percentage >= 50 ? 'bg-yellow-400' : 'bg-rose-500' %>"
-                        style="width:<%= percentage %>%"></div>
-                  </div>
-                  <span class="text-gray-700"><%= percentage %>%</span>
-                </div>
-              </td>
-
-              <td class="px-4 py-3"><span class="font-medium"><%= g.score %></span> / <%= @total_points %></td>
-
-              <td class="px-4 py-3 text-gray-700">
-                <%= distance_of_time_in_words(g.started_at, g.finished_at) %>
-              </td>
-
-              <td class="px-4 py-3 text-gray-500">
-                <%= time_ago_in_words(g.finished_at) %> ago
-              </td>
-
-              <td class="px-4 py-3">
-                <%= link_to "Answers", game_path(g),
-                      class: "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 transition" %>
-              </td>
+      <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-50 text-gray-700 text-xs sm:text-sm">
+            <tr>
+              <th class="px-3 sm:px-4 py-2 text-left">Name</th>
+              <th class="px-3 sm:px-4 py-2 text-left w-40 sm:w-56">Percentage</th>
+              <th class="px-3 sm:px-4 py-2 text-left">Score</th>
+              <th class="px-3 sm:px-4 py-2 text-left">Duration</th>
+              <th class="px-3 sm:px-4 py-2 text-left">Completed</th>
+              <th class="px-3 sm:px-4 py-2 text-left">Actions</th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <% if @quiz.feedbacks.any? %>
-    <section class="mt-8">
-      <h2 class="text-lg font-semibold text-gray-900">Feedbacks</h2>
-
-      <%= turbo_frame_tag dom_id(@quiz, :feedbacks_frame),
-                          src: quiz_feedbacks_path(@quiz) do %>
-        <div class="py-6 text-center text-gray-500">Loading…</div>
-      <% end %>
+          </thead>
+          <tbody>
+            <% @top_games.each do |g| %>
+              <% percentage = @total_points.positive? ? ((g.score.to_f / @total_points) * 100).round : 0 %>
+              <tr class="border-t hover:bg-gray-50 transition">
+                <td class="px-3 sm:px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <%= heroicon "user", variant: :outline, options: { class: "h-4 w-4 sm:h-4.5 sm:w-4.5" } %>
+                    <span class="font-medium text-gray-900"><%= g.user&.username.presence || "Guest" %></span>
+                  </div>
+                </td>
+                <td class="px-3 sm:px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <div class="h-2 w-28 sm:w-40 bg-gray-200 rounded-full overflow-hidden">
+                      <div class="h-full <%= percentage >= 80 ? 'bg-green-500' : percentage >= 50 ? 'bg-yellow-400' : 'bg-rose-500' %>" style="width:<%= percentage %>%"></div>
+                    </div>
+                    <span class="text-gray-700"><%= percentage %>%</span>
+                  </div>
+                </td>
+                <td class="px-3 sm:px-4 py-3"><span class="font-medium"><%= g.score %></span> / <%= @total_points %></td>
+                <td class="px-3 sm:px-4 py-3 text-gray-700"><%= distance_of_time_in_words(g.started_at, g.finished_at) %></td>
+                <td class="px-3 sm:px-4 py-3 text-gray-500"><%= time_ago_in_words(g.finished_at) %> ago</td>
+                <td class="px-3 sm:px-4 py-3">
+                  <%= link_to "Answers", game_path(g),
+                        class: "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 transition text-xs sm:text-sm" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
     </section>
-  <% else %>
-    <p class="mt-2 text-sm text-gray-500">No feedbacks yet.</p>
-  <% end %>
 
+    <% if @quiz.feedbacks.any? %>
+      <section class="mt-8">
+        <h2 class="text-lg font-semibold text-gray-900">Feedbacks</h2>
+        <%= turbo_frame_tag dom_id(@quiz, :feedbacks_frame), src: quiz_feedbacks_path(@quiz) do %>
+          <div class="py-6 text-center text-gray-500">Loading…</div>
+        <% end %>
+      </section>
+    <% else %>
+      <p class="mt-2 text-sm text-gray-500">No feedbacks yet.</p>
+    <% end %>
   <% else %>
     <p class="mt-8 text-sm text-gray-500">No finished games yet.</p>
   <% end %>

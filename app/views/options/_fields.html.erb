@@ -2,30 +2,32 @@
 
 <div data-option
      data-persisted="<%= of.object.persisted? %>"
-     class="group flex w-full items-center gap-3 rounded-xl border border-gray-200/80 bg-white/90 px-3 py-2.5 shadow-sm transition hover:shadow-md">
+     class="group flex flex-col sm:flex-row w-full gap-2 sm:gap-3 rounded-xl border border-gray-200/80 bg-white/90 px-3 py-2.5 shadow-sm transition hover:shadow-md">
 
   <%= of.hidden_field :id if of.object.persisted? %>
   <%= of.hidden_field :_destroy, value: "0", data: { role: "destroy-flag" } %>
 
-  <% if is_text_question %>
-    <!-- every option is implicitly correct -->
-    <%= of.hidden_field :correct, value: "1" %>
-  <% else %>
-    <label class="cursor-pointer inline-flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600/10 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 has-[:checked]:bg-emerald-600 has-[:checked]:text-white has-[:checked]:ring-emerald-600/30"
-           title="Mark as correct">
-      <%= of.check_box :correct, class: "sr-only" %>
-      <%= heroicon "check", variant: :outline, options: { class: "h-4.5 w-4.5" } %>
-    </label>
-  <% end %>
+  <div class="flex items-center gap-2 sm:gap-3 w-full">
+    <% if is_text_question %>
+      <!-- every option is implicitly correct -->
+      <%= of.hidden_field :correct, value: "1" %>
+    <% else %>
+      <label class="cursor-pointer flex-shrink-0 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600/10 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 has-[:checked]:bg-emerald-600 has-[:checked]:text-white has-[:checked]:ring-emerald-600/30"
+             title="Mark as correct">
+        <%= of.check_box :correct, class: "sr-only" %>
+        <%= heroicon "check", variant: :outline, options: { class: "h-4.5 w-4.5" } %>
+      </label>
+    <% end %>
 
-  <%= of.text_field :content,
-        placeholder: "Option text",
-        class: "flex-1 rounded-lg bg-white px-3 py-2.5 placeholder:text-gray-400 focus:outline-none " %>
+    <%= of.text_field :content,
+          placeholder: "Option text",
+          class: "flex-1 min-w-0 rounded-lg bg-white px-3 py-2.5 placeholder:text-gray-400 focus:outline-none" %>
 
-  <button type="button"
-          data-action="nested#removeOption"
-          title="Remove option" aria-label="Remove option"
-          class="p-0 m-0 inline-flex items-center text-rose-600 hover:text-rose-700 focus:outline-none">
-    <%= heroicon "x-mark", variant: :outline, options: { class: "h-4.5 w-4.5" } %>
-  </button>
+    <button type="button"
+            data-action="nested#removeOption"
+            title="Remove option" aria-label="Remove option"
+            class="flex-shrink-0 p-1 text-rose-600 hover:text-rose-700 focus:outline-none">
+      <%= heroicon "x-mark", variant: :outline, options: { class: "h-4.5 w-4.5" } %>
+    </button>
+  </div>
 </div>
