@@ -72,6 +72,44 @@ class QuizzesController < ApplicationController
     redirect_to quizzes_path, notice: "Quiz deleted."
   end
 
+  def generate_with_gemini
+    authorize Quiz
+
+    description = params.require(:description)
+
+    generator = QuizGenerators::GeminiGenerator.new
+    data = generator.generate_from_description(description)
+
+    quiz = current_user.quizzes.build(
+      title: data[:title],
+      description: data[:description]
+    )
+
+    data[:questions].each_with_index do |q, idx|
+      question = quiz.questions.build(
+        type: q[:type],
+        content: q[:content],
+        points: q[:points] || 1,
+        position: idx + 1,
+        max_selections: q[:maxSelections],
+        image_path: q[:imagePath]
+      )
+
+      Array(q[:options]).each do |opt|
+        question.options.build(content: opt[:content], correct: !!opt[:correct])
+      end
+    end
+
+    if quiz.save
+      redirect_to edit_quiz_path(quiz), notice: "Quiz generated from Gemini."
+    else
+      render :new, status: :unprocessable_entity, locals: { quiz: quiz }, notice: "Could not save quiz."
+    end
+  rescue => e
+    Rails.logger.error(e.full_message)
+    redirect_to new_quiz_path, alert: "AI generation failed: #{e.message}"
+  end
+
   private
   def set_quiz
     @quiz = Quiz.includes(questions: :options).find(params[:id])

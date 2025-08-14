@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     end
     resources :feedbacks, only: [ :index, :create, :update ]
     resources :invitations, only: [ :new, :create ]
+    post :generate_with_gemini, on: :collection
   end
 
   resources :profiles, only: [ :index, :show, :destroy ] do

@@ -1,57 +1,115 @@
-<section class="bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-2xl p-6 mb-8 shadow">
-  <div class="flex items-center justify-between gap-4">
-    <div>
-      <h1 class="text-3xl font-semibold">Quizzes</h1>
-      <p class="text-violet-100 mt-1">Izvēlies testu un sāc spēli!</p>
+<section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 text-white shadow-xl ring-1 ring-white/10">
+  <!-- Decorative glow -->
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+    <div class="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+    <div class="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-fuchsia-400/20 blur-3xl"></div>
+  </div>
+
+  <div class="relative p-6 md:p-10">
+    <div class="grid gap-6 md:grid-cols-[1.6fr_1fr] md:items-stretch">
+      <!-- Left card -->
+      <div>
+        <div class="h-full rounded-2xl bg-white/10 p-6 md:p-7 ring-1 ring-white/20 backdrop-blur flex flex-col">
+          <!-- Heading -->
+          <div>
+            <h1 class="text-3xl md:text-4xl font-semibold tracking-tight">Quizzes</h1>
+            <p class="text-violet-100/90 mt-1">Choose a quiz and try it out!</p>
+          </div>
+
+          <!-- Search -->
+          <div class="mt-5">
+            <%= form_with url: quizzes_path, method: :get, local: true, class: "w-full max-w-xl" do |form| %>
+              <div class="group relative flex items-center rounded-full bg-white/10 ring-1 ring-white/20 backdrop-blur transition focus-within:ring-2 focus-within:ring-white/60">
+                <span class="pl-4">
+                  <%= heroicon "magnifying-glass", variant: :outline, options: { class: "h-5 w-5 text-white/80" } %>
+                </span>
+
+                <%= form.text_field(
+                      :search,
+                      value: params[:search],
+                      id: "search",
+                      placeholder: "Search quizzes…",
+                      class: "h-11 w-full bg-transparent px-3 pr-28 text-white placeholder-white/70 outline-none"
+                    ) %>
+
+                <% if params[:search].present? %>
+                  <%= link_to quizzes_path,
+                        class: "absolute right-24 inline-flex h-7 w-7 items-center justify-center rounded-full text-white/80 hover:bg-white/10 hover:text-white transition" do %>
+                    <%= heroicon "x-mark", variant: :outline, options: { class: "h-5 w-5" } %>
+                  <% end %>
+                <% end %>
+
+                <%= form.submit "Search",
+                      name: nil,
+                      class: "absolute right-2 inline-flex items-center justify-center rounded-full bg-white px-4 py-1.5 text-sm font-medium text-black shadow-sm hover:shadow hover:bg-gray-100 transition" %>
+              </div>
+              <p class="mt-2 text-xs text-white/70">Tip: try “geography hard mode” or “history 10Q”.</p>
+            <% end %>
+          </div>
+
+          <!-- Action button under search -->
+          <div class="mt-4">
+            <% if user_signed_in? %>
+              <%= link_to new_quiz_path,
+                class: "inline-flex items-center gap-2 rounded-xl bg-white/15 px-4 py-2 font-medium text-white shadow-sm ring-1 ring-white/20 hover:bg-white/25 transition" do %>
+                <%= heroicon "plus", variant: :outline, options: { class: "h-5 w-5" } %>
+                Create Quiz
+              <% end %>
+            <% else %>
+              <%= link_to "Sign in", new_user_session_path,
+                class: "inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 font-medium text-black shadow hover:bg-gray-100 transition" %>
+            <% end %>
+          </div>
+
+          <div class="grow"></div>
+        </div>
+      </div>
+
+      <!-- Right: AI generator card (unchanged) -->
+      <div>
+        <div class="h-full rounded-2xl bg-white/10 p-5 md:p-6 ring-1 ring-white/20 backdrop-blur flex flex-col">
+          <div class="flex items-center gap-2">
+            <%= heroicon "sparkles", variant: :outline, options: { class: "h-5 w-5 text-yellow-200" } %>
+            <h2 class="text-lg font-semibold">Generate with AI</h2>
+          </div>
+
+          <p class="text-violet-100/90 mt-1 text-sm">
+            Describe the quiz you want and we’ll draft it.
+          </p>
+
+          <%= form_with url: generate_with_gemini_quizzes_path, method: :post, local: true, class: "mt-4 space-y-3" do |f| %>
+            <div class="grow">
+              <%= text_area_tag :description, params[:description],
+                    rows: 4,
+                    placeholder: "e.g., 10Q world capitals, 4 choices each, include 3 tricky ones",
+                    class: "mt-1 w-full rounded-xl bg-white/15 p-3 text-white placeholder-white/70 ring-1 ring-white/25 focus:ring-2 focus:ring-white/80 backdrop-blur outline-none transition resize-y max-h-40" %>
+            </div>
+
+            <div class="mt-auto flex items-center justify-between gap-3">
+              <%= submit_tag "Generate",
+                    class: "inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 font-medium text-black shadow-sm hover:shadow hover:bg-gray-100 transition" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
     </div>
-
-    <% if user_signed_in? %>
-      <%= link_to "Create Quiz", new_quiz_path,
-            class: "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl shadow-sm transition" %>
-    <% else %>
-      <%= link_to "Sign in", new_user_session_path,
-            class: "inline-flex items-center gap-2 bg-white text-black px-4 py-2 rounded-xl shadow-sm hover:bg-gray-100 transition" %>
-    <% end %>
   </div>
-  <div class="mt-6">
-    <%= form_with url: quizzes_path, method: :get, local: true, class: "relative w-full md:max-w-xl" do |form| %>
-      <%= form.text_field(
-            :search,
-            value: params[:search],
-            id: "search",
-            placeholder: "Search quizzes…",
-            class: "h-12 w-full rounded-xl pl-11 pr-28 bg-white/20 backdrop-blur placeholder-white/70 text-white ring-1 ring-white/30 focus:ring-2 focus:ring-white/70 shadow-sm outline-none transition"
-          ) %>
-
-      <% if params[:search].present? %>
-        <%= link_to quizzes_path,
-              class: "absolute right-24 top-1/2 -translate-y-1/2 text-white/80 hover:text-white focus:outline-none" do %>
-          <%= heroicon "x-mark", variant: :outline, options: { class: "h-6 w-6" } %>
-        <% end %>
-      <% end %>
-
-      <%= form.submit "Search",
-            name: nil,
-            class: "absolute right-2 top-1/2 -translate-y-1/2 bg-white text-black font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md hover:bg-gray-100 transition" %>
-    <% end %>
-  </div>
-
-
 </section>
 
 <% if @quizzes.any? %>
   <%= turbo_stream_from "quizzes" %>
-  <ul id="quizzes" class="grid gap-5 md:grid-cols-2">
+  <!-- Big quiz cards: responsive, generous spacing -->
+  <ul id="quizzes"
+      class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 2xl:grid-cols-3 auto-rows-fr">
     <%= render @quizzes %>
   </ul>
-
 <% else %>
-  <div class="rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center">
+  <div class="mt-6 rounded-2xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm">
     <h2 class="text-lg font-semibold text-gray-800">No matching quizzes</h2>
-    <p class="text-gray-600 mt-1">Be the first to create one and challenge others.</p>
+    <p class="mt-1 text-gray-600">Be the first to create one and challenge others.</p>
     <% if user_signed_in? %>
       <%= link_to "Create quiz", new_quiz_path,
-            class: "inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm" %>
+            class: "mt-4 inline-block rounded-xl bg-blue-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-blue-700 transition" %>
     <% end %>
   </div>
 <% end %>

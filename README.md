@@ -33,26 +33,25 @@ Look for http://localhost:3000.
 ### For production, add `.env` file
 
 ```
-# Rails secret
 SECRET_KEY_BASE=
 
-# Postgres Database
 DATABASE_URL=
 
-# Redis Database
 REDIS_URL=
 
-# Mail Service
 SMTP_USERNAME=
 SMTP_PASSWORD=
 MAIL_FROM=
 
-# Cloudflare R2
 R2_ACCESS_KEY_ID=
 R2_SECRET_ACCESS_KEY=
 R2_ENDPOINT=
 R2_BUCKET=
+
 AWS_REQUEST_CHECKSUM_CALCULATION=WHEN_REQUIRED
 AWS_RESPONSE_CHECKSUM_VALIDATION=WHEN_REQUIRED
+
+GEMINI_API_KEY=
+GEMINI_MODELS="gemini-2.5-flash, gemini-2.5-flash-lite, gemini-2.5-pro, gemini-2.0-flash, gemini-2.0-flash-lite, gemini-1.5-flash"
 
 ```
