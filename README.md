@@ -51,23 +51,24 @@ erDiagram
   QUESTIONS }|--o{ OPTIONS : "has"
   QUESTIONS }|--o{ GUESSES : "answered in games"
 
-  OPTIONS |o--o{ GUESSES : "chosen (only for ChoiceGuess)"
+  OPTIONS |o--o{ GUESSES : "chosen for ChoiceGuess"
   GAMES }|--o{ GUESSES : "has"
 
   USERS {
     integer id PK
-    string  email  UNIQUE
+    string  email
     string  encrypted_password
-    string  username UNIQUE
-    boolean admin DEFAULT:false
-    # Devise fields...
+    string  username
+    boolean admin
+    datetime created_at
+    datetime updated_at
   }
 
   QUIZZES {
     integer id PK
     string  title
     text    description
-    integer user_id FK -> USERS.id
+    integer user_id FK
     datetime created_at
     datetime updated_at
   }
@@ -75,12 +76,12 @@ erDiagram
   QUESTIONS {
     integer id PK
     text    content
-    string  type  "STI: ChoiceQuestion/TextQuestion"
-    integer points DEFAULT:1
+    string  type
+    integer points
     integer max_selections
     string  image_path
     integer position
-    integer quiz_id FK -> QUIZZES.id
+    integer quiz_id FK
     datetime created_at
     datetime updated_at
   }
@@ -88,18 +89,18 @@ erDiagram
   OPTIONS {
     integer id PK
     text    content
-    boolean correct DEFAULT:false
-    integer question_id FK -> QUESTIONS.id
+    boolean correct
+    integer question_id FK
     datetime created_at
     datetime updated_at
   }
 
   GAMES {
     integer id PK
-    integer user_id   FK -> USERS.id (nullable)
-    integer quiz_id   FK -> QUIZZES.id
+    integer user_id FK
+    integer quiz_id FK
     integer score
-    string  share_token UNIQUE
+    string  share_token
     datetime started_at
     datetime finished_at
     datetime created_at
@@ -108,19 +109,19 @@ erDiagram
 
   GUESSES {
     integer id PK
-    integer game_id     FK -> GAMES.id
-    integer question_id FK -> QUESTIONS.id
-    integer option_id   FK -> OPTIONS.id (nullable)
-    text    answer_text (nullable)
-    string  type "STI: ChoiceGuess/TextGuess"
+    integer game_id FK
+    integer question_id FK
+    integer option_id
+    text    answer_text
+    string  type
     datetime created_at
     datetime updated_at
   }
 
   FEEDBACKS {
     integer id PK
-    integer quiz_id FK -> QUIZZES.id
-    integer user_id FK -> USERS.id
+    integer quiz_id FK
+    integer user_id FK
     text    comment
     datetime created_at
     datetime updated_at
